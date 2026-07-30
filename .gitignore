@@ -1,0 +1,38 @@
+# Flutter
+.dart_tool/
+.packages
+build/
+*.iml
+*.lock
+**/generated/
+**/*.g.dart
+
+# Android
+android/.gradle/
+android/app/build/
+android/local.properties
+android/key.properties
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Node.js backend
+backend/node_modules/
+backend/dist/
+backend/.env
+backend/prisma/*.db
+backend/prisma/*.db-journal
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

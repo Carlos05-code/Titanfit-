@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FitnessLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  ATHLETE
+}
+
+enum Goal {
+  MUSCLE_GAIN
+  FAT_LOSS
+  ENDURANCE
+  STRENGTH
+  GENERAL_FITNESS
+}
+
+enum HabitType {
+  WAKE_UP_EARLY
+  WORKOUT_COMPLETED
+  DRINK_WATER
+  EAT_HEALTHY
+  SLEEP_ON_TIME
+  STRETCH
+  MEDITATE
+}
+
+enum AchievementTitle {
+  SEVEN_DAY_WARRIOR
+  THIRTY_DAY_BEAST_MODE
+  EARLY_RISER
+  STRENGTH_MASTER
+  ENDURANCE_KING
+  DISCIPLINE_TITAN
+  HYDRATION_HERO
+  SLEEP_CHAMPION
+  FIRST_WORKOUT
+  HUNDRED_WORKOUTS
+}
+
+model User {
+  id             String       @id @default(uuid())
+  email          String       @unique
+  password       String
+  name           String
+  age            Int?
+  gender         String?
+  height         Float?
+  weight         Float?
+  fitnessLevel   FitnessLevel @default(BEGINNER)
+  goals          Goal[]
+  xpPoints       Int          @default(0)
+  level          Int          @default(1)
+  disciplineScore Int         @default(0)
+  currentStreak  Int          @default(0)
+  longestStreak  Int          @default(0)
+  refreshToken   String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  workouts       Workout[]
+  habits         Habit[]
+  sleepRecords   SleepRecord[]
+  achievements   UserAchievement[]
+  progressPhotos ProgressPhoto[]
+}
+
+model Workout {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  goal      Goal?
+  date      DateTime @default(now())
+  duration  Int?
+  calories  Int?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises Exercise[]
+
+  @@index([userId])
+  @@index([userId, date])
+}
+
+model Exercise {
+  id        String  @id @default(uuid())
+  workoutId String
+  name      String
+  sets      Int?
+  reps      Int?
+  weight    Float?
+  duration  Int?
+  calories  Int?
+  order     Int     @default(0)
+
+  workout   Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@index([workoutId])
+}
+
+model Habit {
+  id        String    @id @default(uuid())
+  userId    String
+  type      HabitType
+  completed Boolean   @default(false)
+  date      DateTime  @default(now())
+  createdAt DateTime  @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type, date])
+  @@index([userId, date])
+}
+
+model SleepRecord {
+  id        String   @id @default(uuid())
+  userId    String
+  sleepTime DateTime
+  wakeTime  DateTime
+  duration  Int
+  score     Float?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, sleepTime])
+}
+
+model UserAchievement {
+  id            String           @id @default(uuid())
+  userId        String
+  title         AchievementTitle
+  unlockedAt    DateTime         @default(now())
+  createdAt     DateTime         @default(now())
+
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, title])
+  @@index([userId])
+}
+
+model ProgressPhoto {
+  id        String   @id @default(uuid())
+  userId    String
+  imageUrl  String
+  note      String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
