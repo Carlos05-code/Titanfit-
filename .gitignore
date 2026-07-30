@@ -1,38 +1,100 @@
-# Flutter
+# ---------------------- Flutter / Dart ----------------------
 .dart_tool/
 .packages
 build/
 *.iml
-*.lock
+*.class
 **/generated/
 **/*.g.dart
+.pub-cache/
+.pub/
+flutter_*.png
+coverage/
 
-# Android
+# ---------------------- Android ----------------------
 android/.gradle/
 android/app/build/
 android/local.properties
 android/key.properties
+android/captures/
+*.apk
+*.aab
+*.ap_
+android/signing.properties
 
-# iOS
+# ---------------------- iOS ----------------------
 ios/Pods/
 ios/.symlinks/
 ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
+ios/Runner.xcworkspace/xcuserdata/
+ios/Runner.xcodeproj/xcuserdata/
+ios/ServiceDefinitions.json
+ios/Podfile.lock
+*.xcworkspace/xcuserdata/
 
-# Node.js backend
+# ---------------------- macOS ----------------------
+macos/Pods/
+macos/.symlinks/
+macos/Flutter/Flutter.framework
+macos/Flutter/Flutter.podspec
+macos/Runner.xcworkspace/xcuserdata/
+macos/Runner.xcodeproj/xcuserdata/
+
+# ---------------------- Windows ----------------------
+windows/flutter/ephemeral/
+windows/runner/Debug/
+
+# ---------------------- Linux ----------------------
+linux/flutter/ephemeral/
+linux/runner/Debug/
+
+# ---------------------- Node.js Backend ----------------------
 backend/node_modules/
 backend/dist/
 backend/.env
+backend/.env.local
+backend/.env.production
+backend/.env.*.local
 backend/prisma/*.db
 backend/prisma/*.db-journal
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
+backend/.npm/
 
-# IDE
+# ---------------------- IDE & Editors ----------------------
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+.settings/
 
-# OS
+# ---------------------- OS Files ----------------------
 .DS_Store
+.DS_Store?
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---------------------- Logs & Temp ----------------------
+*.log
+*.tmp
+*.temp
+.history/
+.directory
+
+# ---------------------- Secrets ----------------------
+*.key
+*.pem
+*.cert
+*.p12
+*.pfx
+credentials.json
+service-account.json
