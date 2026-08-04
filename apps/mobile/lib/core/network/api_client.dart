@@ -1,49 +1,74 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constants/app_constants.dart';
 import '../constants/api_constants.dart';
 
+/// HTTP client with automatic bearer-token injection and single-flight
+/// refresh-on-401 handling.
 class ApiClient {
+  final FlutterSecureStorage _storage;
   late final Dio _dio;
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  Future<bool>? _pendingRefresh;
 
-  ApiClient() {
-    _dio = Dio(BaseOptions(
-      baseUrl: AppConstants.baseUrl,
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 5),
-      headers: {'Content-Type': 'application/json'},
-    ));
+  ApiClient({FlutterSecureStorage? storage})
+    : _storage = storage ?? const FlutterSecureStorage() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: AppConstants.baseUrl,
+        connectTimeout: const Duration(seconds: 5),
+        receiveTimeout: const Duration(seconds: 5),
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
 
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        final token = await _storage.read(key: 'access_token');
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
-        }
-        handler.next(options);
-      },
-      onError: (error, handler) async {
-        if (error.response?.statusCode == 401) {
-          final refreshed = await _tryRefreshToken();
-          if (refreshed) {
-            final retryResponse = await _retry(error.requestOptions);
-            handler.resolve(retryResponse);
-            return;
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = await _storage.read(key: 'access_token');
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
           }
-        }
-        handler.next(error);
-      },
-    ));
+          handler.next(options);
+        },
+        onError: (error, handler) async {
+          if (error.response?.statusCode == 401) {
+            final refreshed = await _tryRefreshToken();
+            if (refreshed) {
+              try {
+                final retryResponse = await _retry(error.requestOptions);
+                handler.resolve(retryResponse);
+                return;
+              } on DioException {
+                handler.next(error);
+                return;
+              }
+            }
+          }
+          handler.next(error);
+        },
+      ),
+    );
   }
 
-  Future<bool> _tryRefreshToken() async {
+  /// Single-flight refresh: concurrent 401s share one refresh call.
+  Future<bool> _tryRefreshToken() {
+    final inFlight = _pendingRefresh;
+    if (inFlight != null) return inFlight;
+
+    final future = _refreshOnce();
+    _pendingRefresh = future;
+    return future.whenComplete(() => _pendingRefresh = null);
+  }
+
+  Future<bool> _refreshOnce() async {
     try {
       final refreshToken = await _storage.read(key: 'refresh_token');
       if (refreshToken == null) return false;
 
-      final response = await Dio(BaseOptions(baseUrl: AppConstants.baseUrl))
-          .post(ApiConstants.refresh, data: {'refreshToken': refreshToken});
+      final response = await Dio(
+        BaseOptions(baseUrl: AppConstants.baseUrl),
+      ).post(ApiConstants.refresh, data: {'refreshToken': refreshToken});
 
       if (response.statusCode == 200) {
         final data = response.data['data'];
@@ -53,7 +78,9 @@ class ApiClient {
       }
       return false;
     } catch (_) {
-      await _storage.deleteAll();
+      // Failed refresh: drop only the tokens — never wipe local user data.
+      await _storage.delete(key: 'access_token');
+      await _storage.delete(key: 'refresh_token');
       return false;
     }
   }
@@ -62,10 +89,7 @@ class ApiClient {
     final token = await _storage.read(key: 'access_token');
     final options = Options(
       method: requestOptions.method,
-      headers: {
-        ...requestOptions.headers,
-        'Authorization': 'Bearer $token',
-      },
+      headers: {...requestOptions.headers, 'Authorization': 'Bearer $token'},
     );
     return _dio.request(
       requestOptions.path,
@@ -84,6 +108,9 @@ class ApiClient {
   Future<Response> put(String path, {dynamic data}) =>
       _dio.put(path, data: data);
 
+  Future<Response> patch(String path, {dynamic data}) =>
+      _dio.patch(path, data: data);
+
   Future<Response> delete(String path) => _dio.delete(path);
 
   Future<void> setTokens(String accessToken, String refreshToken) async {
@@ -95,8 +122,7 @@ class ApiClient {
     await _storage.deleteAll();
   }
 
-  Future<String?> getAccessToken() =>
-      _storage.read(key: 'access_token');
+  Future<String?> getAccessToken() => _storage.read(key: 'access_token');
 
   Future<bool> hasToken() async {
     final token = await _storage.read(key: 'access_token');

@@ -53,7 +53,8 @@ class WorkoutRepository {
         duration: data['duration'] as int?,
         calories: data['calories'] as int?,
         notes: data['notes'] as String?,
-        exercises: (data['exercises'] as List?)
+        exercises:
+            (data['exercises'] as List?)
                 ?.map((e) => ExerciseModel.fromJson(e as Map<String, dynamic>))
                 .toList() ??
             [],
@@ -65,7 +66,10 @@ class WorkoutRepository {
 
   Future<WorkoutModel> update(String id, Map<String, dynamic> data) async {
     try {
-      final response = await _client.put('${ApiConstants.workouts}/$id', data: data);
+      final response = await _client.patch(
+        '${ApiConstants.workouts}/$id',
+        data: data,
+      );
       return WorkoutModel.fromJson(response.data['data']);
     } catch (_) {
       throw Exception('Update failed offline');
@@ -79,9 +83,15 @@ class WorkoutRepository {
     await _removeLocal(id);
   }
 
-  Future<void> addExercise(String workoutId, Map<String, dynamic> exerciseData) async {
+  Future<void> addExercise(
+    String workoutId,
+    Map<String, dynamic> exerciseData,
+  ) async {
     try {
-      await _client.post('${ApiConstants.workouts}/$workoutId/exercises', data: exerciseData);
+      await _client.post(
+        '${ApiConstants.workouts}/$workoutId/exercises',
+        data: exerciseData,
+      );
     } catch (_) {
       // Local fallback
     }
@@ -104,17 +114,28 @@ class WorkoutRepository {
   Future<Map<String, dynamic>> getStats() async {
     final workouts = await _getLocal();
     final total = workouts.length;
-    final totalDuration = workouts.fold<int>(0, (s, w) => s + (w.duration ?? 0));
-    final totalCalories = workouts.fold<int>(0, (s, w) => s + (w.calories ?? 0));
+    final totalDuration = workouts.fold<int>(
+      0,
+      (s, w) => s + (w.duration ?? 0),
+    );
+    final totalCalories = workouts.fold<int>(
+      0,
+      (s, w) => s + (w.calories ?? 0),
+    );
     return {
       'totalWorkouts': total,
       'totalDuration': totalDuration,
       'totalCalories': totalCalories,
-      'recent': workouts.take(7).map((w) => {
-        'date': w.date.toIso8601String(),
-        'duration': w.duration,
-        'calories': w.calories,
-      }).toList(),
+      'recent': workouts
+          .take(7)
+          .map(
+            (w) => {
+              'date': w.date.toIso8601String(),
+              'duration': w.duration,
+              'calories': w.calories,
+            },
+          )
+          .toList(),
     };
   }
 
@@ -127,7 +148,9 @@ class WorkoutRepository {
     final json = await _storage.read(key: 'local_workouts');
     if (json == null) return [];
     final list = jsonDecode(json) as List;
-    return list.map((e) => WorkoutModel.fromJson(e as Map<String, dynamic>)).toList();
+    return list
+        .map((e) => WorkoutModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   Future<void> _addLocal(WorkoutModel workout) async {

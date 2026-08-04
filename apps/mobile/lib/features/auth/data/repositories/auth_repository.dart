@@ -26,7 +26,11 @@ class AuthRepository {
         final user = UserModel.fromJson(userData as Map<String, dynamic>);
         final token = 'local_token_${user.id}';
         await _client.setTokens(token, token);
-        return AuthResponse(user: user, accessToken: token, refreshToken: token);
+        return AuthResponse(
+          user: user,
+          accessToken: token,
+          refreshToken: token,
+        );
       }
     }
 
@@ -44,7 +48,11 @@ class AuthRepository {
     }
   }
 
-  Future<AuthResponse> register(String email, String password, String name) async {
+  Future<AuthResponse> register(
+    String email,
+    String password,
+    String name,
+  ) async {
     final user = UserModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       email: email,
@@ -62,10 +70,7 @@ class AuthRepository {
       throw Exception('Email already registered');
     }
 
-    final userMap = {
-      ...user.toJson(),
-      'password': password,
-    };
+    final userMap = {...user.toJson(), 'password': password};
     users[email] = userMap;
     await _storage.write(key: 'local_users', value: jsonEncode(users));
 
@@ -119,7 +124,7 @@ class AuthRepository {
 
     // Fallback to API
     try {
-      final response = await _client.put(ApiConstants.profile, data: data);
+      final response = await _client.patch(ApiConstants.profile, data: data);
       return UserModel.fromJson(response.data['data']);
     } catch (_) {
       throw Exception('Failed to update profile');
