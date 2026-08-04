@@ -1,0 +1,20 @@
+# Normalize and protect line endings across the monorepo.
+* text=auto
+
+# Shell scripts must always be LF (CRLF breaks execution on Linux/macOS).
+*.sh text eol=lf
+
+# Binary assets — never convert.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.ttf binary
+*.otf binary
+
+# Flutter/iOS/Android artifact formats that should stay as-is.
+*.lock text eol=lf
+*.pbxproj text eol=lf
+*.xcconfig text eol=lf
