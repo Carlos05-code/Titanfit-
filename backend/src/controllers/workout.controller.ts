@@ -37,7 +37,7 @@ export class WorkoutController {
 
   async getById(req: AuthenticatedRequest, res: Response) {
     try {
-      const workout = await workoutService.getById(req.params.id, req.user!.userId);
+      const workout = await workoutService.getById(req.params.id as string, req.user!.userId);
       res.json({ success: true, data: workout });
     } catch (error: any) {
       res.status(404).json({ success: false, error: error.message });
@@ -60,7 +60,7 @@ export class WorkoutController {
 
   async update(req: AuthenticatedRequest, res: Response) {
     try {
-      const workout = await workoutService.update(req.params.id, req.user!.userId, req.body);
+      const workout = await workoutService.update(req.params.id as string, req.user!.userId, req.body);
       res.json({ success: true, data: workout });
     } catch (error: any) {
       res.status(404).json({ success: false, error: error.message });
@@ -69,7 +69,7 @@ export class WorkoutController {
 
   async delete(req: AuthenticatedRequest, res: Response) {
     try {
-      await workoutService.delete(req.params.id, req.user!.userId);
+      await workoutService.delete(req.params.id as string, req.user!.userId);
       res.json({ success: true, message: 'Workout deleted' });
     } catch (error: any) {
       res.status(404).json({ success: false, error: error.message });
