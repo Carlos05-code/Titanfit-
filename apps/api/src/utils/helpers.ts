@@ -8,8 +8,9 @@ export function errorResponse(error: string): ApiResponse {
   return { success: false, error };
 }
 
-export function calculateLevel(xpPoints: number): number {
-  return Math.floor(xpPoints / 1000) + 1;
+/** Level from XP: 1 level per `xpPerLevel` points. Pure & testable. */
+export function calculateLevel(xpPoints: number, xpPerLevel = 1000): number {
+  return Math.floor(xpPoints / xpPerLevel) + 1;
 }
 
 export function calculateDisciplineScore(
@@ -18,7 +19,7 @@ export function calculateDisciplineScore(
   sleepConsistency: number
 ): number {
   return Math.min(100, Math.round(
-    (workoutStreak * 0.4 + habitStreak * 0.35 + sleepConsistency * 0.25)
+    workoutStreak * 0.4 + habitStreak * 0.35 + sleepConsistency * 0.25
   ));
 }
 

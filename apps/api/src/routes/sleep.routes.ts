@@ -1,11 +1,14 @@
 import { Router } from 'express';
 import { sleepController } from '../controllers/sleep.controller';
 import { authenticate } from '../middleware/auth';
+import { asyncHandler } from '../middleware/asyncHandler';
+import { validate } from '../middleware/validate';
+import { recordSleepSchema, sleepHistoryQuerySchema } from '../validators';
 
 const router = Router();
 
-router.post('/', authenticate, (req: any, res) => sleepController.record(req, res));
-router.get('/history', authenticate, (req: any, res) => sleepController.getHistory(req, res));
-router.get('/stats', authenticate, (req: any, res) => sleepController.getStats(req, res));
+router.post('/', authenticate, validate(recordSleepSchema), asyncHandler(sleepController.record));
+router.get('/history', authenticate, validate(sleepHistoryQuerySchema), asyncHandler(sleepController.getHistory));
+router.get('/stats', authenticate, asyncHandler(sleepController.getStats));
 
 export default router;

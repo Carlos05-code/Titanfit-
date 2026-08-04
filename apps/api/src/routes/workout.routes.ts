@@ -1,14 +1,22 @@
 import { Router } from 'express';
 import { workoutController } from '../controllers/workout.controller';
 import { authenticate } from '../middleware/auth';
+import { asyncHandler } from '../middleware/asyncHandler';
+import { validate } from '../middleware/validate';
+import {
+  createWorkoutSchema,
+  paginationQuerySchema,
+  updateWorkoutSchema,
+  workoutIdParamsSchema,
+} from '../validators';
 
 const router = Router();
 
-router.get('/stats', authenticate, (req: any, res) => workoutController.getStats(req, res));
-router.get('/', authenticate, (req: any, res) => workoutController.getAll(req, res));
-router.get('/:id', authenticate, (req: any, res) => workoutController.getById(req, res));
-router.post('/', authenticate, (req: any, res) => workoutController.create(req, res));
-router.put('/:id', authenticate, (req: any, res) => workoutController.update(req, res));
-router.delete('/:id', authenticate, (req: any, res) => workoutController.delete(req, res));
+router.get('/stats', authenticate, asyncHandler(workoutController.getStats));
+router.get('/', authenticate, validate(paginationQuerySchema), asyncHandler(workoutController.getAll));
+router.get('/:id', authenticate, validate(workoutIdParamsSchema), asyncHandler(workoutController.getById));
+router.post('/', authenticate, validate(createWorkoutSchema), asyncHandler(workoutController.create));
+router.patch('/:id', authenticate, validate(workoutIdParamsSchema), validate(updateWorkoutSchema), asyncHandler(workoutController.update));
+router.delete('/:id', authenticate, validate(workoutIdParamsSchema), asyncHandler(workoutController.delete));
 
 export default router;

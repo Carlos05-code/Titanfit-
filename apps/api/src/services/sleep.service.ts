@@ -1,22 +1,48 @@
 import prisma from '../utils/prisma';
-import { calculateSleepScore } from '../utils/helpers';
+import { AppError } from '../utils/AppError';
+import { calculateLevel, calculateSleepScore } from '../utils/helpers';
+import { RecordSleepBody } from '../validators';
+
+const SLEEP_XP = 30;
+const XP_PER_LEVEL = 1000;
 
 export class SleepService {
-  async record(userId: string, sleepTime: string, wakeTime: string) {
-    const sleep = new Date(sleepTime);
-    const wake = new Date(wakeTime);
-    const durationMs = wake.getTime() - sleep.getTime();
-    const durationHours = Math.round(durationMs / (1000 * 60 * 60) * 10) / 10;
+  async record(userId: string, data: RecordSleepBody) {
+    const sleep = new Date(data.sleepTime);
+    const wake = new Date(data.wakeTime);
 
-    if (durationHours <= 0) throw new Error('Wake time must be after sleep time');
+    if (Number.isNaN(sleep.getTime()) || Number.isNaN(wake.getTime())) {
+      throw AppError.badRequest('sleepTime and wakeTime must be valid ISO-8601 dates');
+    }
+
+    const durationHours = Math.round(
+      (wake.getTime() - sleep.getTime()) / (1000 * 60 * 60) * 10,
+    ) / 10;
+
+    if (durationHours <= 0) {
+      throw AppError.badRequest('Wake time must be after sleep time');
+    }
 
     const score = calculateSleepScore(durationHours);
 
-    const record = await prisma.sleepRecord.create({
-      data: { userId, sleepTime: sleep, wakeTime: wake, duration: durationHours, score },
+    // Persist the record and award XP atomically.
+    const record = await prisma.$transaction(async (tx) => {
+      const created = await tx.sleepRecord.create({
+        data: { userId, sleepTime: sleep, wakeTime: wake, duration: durationHours, score },
+      });
+
+      const user = await tx.user.update({
+        where: { id: userId },
+        data: { xpPoints: { increment: SLEEP_XP } },
+      });
+      const newLevel = calculateLevel(user.xpPoints, XP_PER_LEVEL);
+      if (newLevel > user.level) {
+        await tx.user.update({ where: { id: userId }, data: { level: newLevel } });
+      }
+
+      return created;
     });
 
-    await this.awardXp(userId, 30);
     return { ...record, score };
   }
 
@@ -42,17 +68,16 @@ export class SleepService {
   }
 
   async getStats(userId: string) {
-    const [totalRecords, avgScore, avgDuration] = await Promise.all([
+    const [totalRecords, avgScore, avgDuration, recent] = await Promise.all([
       prisma.sleepRecord.count({ where: { userId } }),
       prisma.sleepRecord.aggregate({ where: { userId }, _avg: { score: true } }),
       prisma.sleepRecord.aggregate({ where: { userId }, _avg: { duration: true } }),
+      prisma.sleepRecord.findMany({
+        where: { userId },
+        orderBy: { sleepTime: 'desc' },
+        take: 7,
+      }),
     ]);
-
-    const recent = await prisma.sleepRecord.findMany({
-      where: { userId },
-      orderBy: { sleepTime: 'desc' },
-      take: 7,
-    });
 
     return {
       totalRecords,
@@ -60,13 +85,6 @@ export class SleepService {
       avgDuration: Math.round((avgDuration._avg.duration || 0) * 10) / 10,
       recent,
     };
-  }
-
-  private async awardXp(userId: string, points: number) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: { xpPoints: { increment: points } },
-    });
   }
 }
 

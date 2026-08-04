@@ -25,7 +25,6 @@ Health check: `GET http://localhost:3000/health`
 | Variable                  | Description                                   | Default            |
 | ------------------------- | --------------------------------------------- | ------------------ |
 | `DATABASE_URL`            | PostgreSQL connection string                  | *(required)*       |
-| `REDIS_URL`               | Optional Redis (caching/rate-limit, reserved) | `redis://localhost:6379` |
 | `JWT_SECRET`              | Access-token signing secret                   | `fallback-secret`  |
 | `JWT_REFRESH_SECRET`      | Refresh-token signing secret                  | `fallback-refresh-secret` |
 | `JWT_EXPIRES_IN`          | Access token TTL                              | `15m`              |

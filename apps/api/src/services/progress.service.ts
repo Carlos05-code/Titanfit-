@@ -45,13 +45,11 @@ export class ProgressService {
     weekAgo.setDate(weekAgo.getDate() - 7);
     weekAgo.setHours(0, 0, 0, 0);
 
-    const workouts = await prisma.workout.findMany({
+    return prisma.workout.findMany({
       where: { userId, date: { gte: weekAgo } },
       orderBy: { date: 'asc' },
       select: { date: true, duration: true, calories: true },
     });
-
-    return workouts;
   }
 
   private async getSleepStats(userId: string) {

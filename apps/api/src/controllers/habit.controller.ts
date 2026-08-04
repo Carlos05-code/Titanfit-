@@ -1,49 +1,30 @@
 import { Response } from 'express';
 import { habitService } from '../services/habit.service';
 import { AuthenticatedRequest } from '../types';
+import { CheckInBody, HabitMonthQuery, HabitQuery } from '../validators';
 
 export class HabitController {
   async getAll(req: AuthenticatedRequest, res: Response) {
-    try {
-      const habits = await habitService.getAll(req.user!.userId, req.query.date as string);
-      res.json({ success: true, data: habits });
-    } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message });
-    }
+    const { date } = req.query as unknown as HabitQuery;
+    const habits = await habitService.getAll(req.user!.userId, date);
+    res.json({ success: true, data: habits });
   }
 
   async getMonthly(req: AuthenticatedRequest, res: Response) {
-    try {
-      const year = parseInt(req.query.year as string) || new Date().getFullYear();
-      const month = parseInt(req.query.month as string) || new Date().getMonth() + 1;
-      const habits = await habitService.getMonthly(req.user!.userId, year, month);
-      res.json({ success: true, data: habits });
-    } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message });
-    }
+    // `validate(habitMonthQuerySchema)` coerces + defaults these in the route.
+    const { year, month } = req.query as unknown as HabitMonthQuery;
+    const habits = await habitService.getMonthly(req.user!.userId, year, month);
+    res.json({ success: true, data: habits });
   }
 
   async checkIn(req: AuthenticatedRequest, res: Response) {
-    try {
-      const { type, date } = req.body;
-      if (!type) {
-        res.status(400).json({ success: false, error: 'Habit type is required' });
-        return;
-      }
-      const habit = await habitService.checkIn(req.user!.userId, type, date);
-      res.json({ success: true, data: habit });
-    } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message });
-    }
+    const habit = await habitService.checkIn(req.user!.userId, req.body as CheckInBody);
+    res.json({ success: true, data: habit });
   }
 
   async getStreaks(req: AuthenticatedRequest, res: Response) {
-    try {
-      const streaks = await habitService.getStreaks(req.user!.userId);
-      res.json({ success: true, data: streaks });
-    } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message });
-    }
+    const streaks = await habitService.getStreaks(req.user!.userId);
+    res.json({ success: true, data: streaks });
   }
 }
 
