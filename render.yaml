@@ -3,8 +3,8 @@ services:
     name: titanfit-api
     runtime: docker
     plan: free
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: ./apps/api
     autoDeployTrigger: commit
     healthCheckPath: /health
     envVars:

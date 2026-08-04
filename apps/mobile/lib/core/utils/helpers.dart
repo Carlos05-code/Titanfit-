@@ -27,8 +27,8 @@ String formatTimeOfDay(DateTime date) {
   return '$h:$minute $period';
 }
 
-String greeting() {
-  final hour = DateTime.now().hour;
+String greeting([DateTime? clock]) {
+  final hour = (clock ?? DateTime.now()).hour;
   if (hour < 12) return 'Good morning';
   if (hour < 17) return 'Good afternoon';
   return 'Good evening';
