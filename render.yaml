@@ -4,7 +4,8 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./backend/Dockerfile
-    autoDeploy: true
+    dockerContext: ./backend
+    autoDeployTrigger: commit
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
@@ -26,8 +27,8 @@ services:
       - key: NODE_ENV
         value: production
 
-  - type: postgres
-    name: titanfit-db
+databases:
+  - name: titanfit-db
     plan: free
     databaseName: titanfit
     user: titanfit
