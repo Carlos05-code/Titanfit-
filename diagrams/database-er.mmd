@@ -1,0 +1,98 @@
+%% TitanFit — Database ER diagram
+%% Models from apps/api/prisma/schema.prisma (PostgreSQL, uuid PKs, cascade deletes).
+%% All relations are 1:N from User; Workout 1:N Exercise.
+erDiagram
+    USER ||--o{ WORKOUT : "owns"
+    USER ||--o{ HABIT : "logs"
+    USER ||--o{ SLEEPRECORD : "records"
+    USER ||--o{ USERACHIEVEMENT : "earns"
+    USER ||--o{ PROGRESSPHOTO : "uploads"
+    WORKOUT ||--o{ EXERCISE : "contains"
+
+    USER {
+        string id PK "uuid"
+        string email UK "unique"
+        string password "bcrypt hash"
+        string name
+        int age "nullable"
+        string gender "nullable"
+        float height "nullable"
+        float weight "nullable"
+        string fitnessLevel "enum FitnessLevel"
+        string goals "enum Goal[]"
+        int xpPoints "default 0"
+        int level "default 1"
+        int disciplineScore "default 0"
+        int currentStreak "default 0"
+        int longestStreak "default 0"
+        string refreshToken "nullable"
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    %% @@index([userId]), @@index([userId, date])
+    WORKOUT {
+        string id PK "uuid"
+        string userId FK "User, onDelete Cascade"
+        string title
+        string goal "enum Goal, nullable"
+        datetime date "default now"
+        int duration "nullable"
+        int calories "nullable"
+        string notes "nullable"
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    %% @@index([workoutId])
+    EXERCISE {
+        string id PK "uuid"
+        string workoutId FK "Workout, onDelete Cascade"
+        string name
+        int sets "nullable"
+        int reps "nullable"
+        float weight "nullable"
+        int duration "nullable"
+        int calories "nullable"
+        int order "default 0"
+    }
+
+    %% @@unique([userId, type, date]), @@index([userId, date])
+    HABIT {
+        string id PK "uuid"
+        string userId FK "User, onDelete Cascade"
+        string type "enum HabitType"
+        boolean completed "default false"
+        datetime date "default now"
+        datetime createdAt
+    }
+
+    %% @@index([userId]), @@index([userId, sleepTime])
+    SLEEPRECORD {
+        string id PK "uuid"
+        string userId FK "User, onDelete Cascade"
+        datetime sleepTime
+        datetime wakeTime
+        int duration
+        float score "nullable"
+        datetime createdAt
+    }
+
+    %% @@unique([userId, title]), @@index([userId])
+    USERACHIEVEMENT {
+        string id PK "uuid"
+        string userId FK "User, onDelete Cascade"
+        string title "enum AchievementTitle"
+        datetime unlockedAt
+        datetime createdAt
+    }
+
+    %% @@index([userId])
+    PROGRESSPHOTO {
+        string id PK "uuid"
+        string userId FK "User, onDelete Cascade"
+        string imageUrl
+        string note "nullable"
+        datetime date "default now"
+        datetime createdAt
+    }

@@ -1,0 +1,49 @@
+%% TitanFit — System Architecture
+%% Flutter client <-> Express REST API <-> Prisma <-> PostgreSQL (Render)
+%% Includes JWT auth path, Docker-on-Render deployment, and health check.
+flowchart TD
+
+    subgraph CLIENT["Flutter App — apps/mobile"]
+        direction TB
+        UI["Flutter UI (features: auth, dashboard, workouts, habits, sleep, progress, profile, reminders, notifications)"]
+        STATE["Riverpod state + go_router (authProvider redirect)"]
+        HTTP["HTTP client with interceptors"]
+        CACHE["Offline-first cache (flutter_secure_storage)"]
+        UI --> STATE
+        UI --> HTTP
+        HTTP <-->|"read / write offline data"| CACHE
+    end
+
+    subgraph API["REST API — apps/api (Node.js · TypeScript · Express)"]
+        direction TB
+        ROUTES["routes/"]
+        CTRL["controllers/"]
+        AUTH["middleware/auth.ts (JWT verify + refresh rotation)"]
+        SVC["services/ (Prisma Client)"]
+        ROUTES --> CTRL
+        ROUTES --> AUTH
+        CTRL --> SVC
+    end
+
+    subgraph DB["Data layer"]
+        PRISMA["Prisma ORM (prisma/schema.prisma)"]
+        PG[("PostgreSQL — managed instance on Render")]
+        PRISMA -->|"SQL"| PG
+    end
+
+    subgraph DEPLOY["Deployment — Render"]
+        DOCKER["Docker image (apps/api/Dockerfile)<br/>built in CI, run on Render"]
+        HEALTH["Health check: /health route + DB ping"]
+        DOCKER --> HEALTH
+    end
+
+    %% Main traffic path: HTTPS JSON with JWT bearer tokens
+    HTTP -->|"HTTPS JSON (Authorization: Bearer JWT)"| ROUTES
+    SVC -->|"Prisma Client"| PRISMA
+
+    %% JWT lifecycle: signed by API, persisted in secure storage
+    AUTH -.->|"access 15m + refresh 7d (rotated)"| CACHE
+
+    %% Deployment wiring
+    API -->|"hosted on"| DEPLOY
+    ROUTES -->|"served at titanfit-api.onrender.com"| HEALTH

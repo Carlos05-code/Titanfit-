@@ -1,0 +1,31 @@
+%% TitanFit — User journey
+%% onboarding/auth -> daily flows -> gamification (XP, level, streak) -> insights.
+flowchart TD
+
+    START(["New user installs app"])
+    START --> AUTH["Onboarding + authentication<br/>(register/login via /api/auth)"]
+    AUTH --> PROF["Profile setup<br/>age · height · weight · goals · fitness level"]
+    PROF --> DASH["Dashboard (shell with bottom nav)"]
+
+    subgraph DAILY["Daily flows"]
+        direction LR
+        W["Log workout<br/>(session screen, sets/reps/weight)"]
+        H["Check habit<br/>(complete a HabitType for today)"]
+        S["Log sleep<br/>(sleepTime → wakeTime → duration)"]
+        P["View progress<br/>(charts · progress photos · achievements)"]
+    end
+
+    DASH --> DAILY
+
+    subgraph GAMIFICATION["Gamification"]
+        XP["Earn XP per completed action"]
+        LVL["Level up (User.level)"]
+        STREAK["Streak maintenance (current/longest)"]
+        ACH["Achievements (UserAchievement titles)"]
+        XP --> LVL --> STREAK --> ACH
+    end
+
+    DAILY --> GAMIFICATION
+    GAMIFICATION --> INSIGHTS["Insights<br/>sleep score · discipline score · progress trends"]
+    INSIGHTS --> RETENTION["Retention loop<br/>reminders + notifications drive next daily flow"]
+    RETENTION --> DAILY

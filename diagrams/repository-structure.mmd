@@ -1,0 +1,63 @@
+%% TitanFit — Git-managed repository structure
+%% Focus: CI, governance files, docs, and diagrams (the managed/versioned surface).
+flowchart TD
+
+    ROOT["titanfit/ — Git repository"]
+
+    subgraph GH["CI & repo automation — .github/"]
+        CI["workflows/ci.yml<br/>push · pull_request · workflow_dispatch"]
+        DEP["dependabot.yml"]
+        IT["ISSUE_TEMPLATE/"]
+    end
+
+    subgraph GOV["Governance — root files"]
+        README["README.md"]
+        LIC["LICENSE"]
+        CONTRIB["CONTRIBUTING.md · CODE_OF_CONDUCT.md"]
+        SEC["SECURITY.md · CHANGELOG.md"]
+    end
+
+    subgraph DOC["Documentation — docs/"]
+        D1["architecture/"]
+        D2["api/"]
+        D3["decisions/ (ADRs)"]
+        D4["deployment/"]
+        D5["specifications/ · testing/ · audit/"]
+        DD["diagrams/ (embed point for Mermaid)"]
+        D1 --> DD
+    end
+
+    subgraph DIAG["Mermaid sources — diagrams/"]
+        DG1["system-architecture · authentication-flow"]
+        DG2["database-er · sequence-session"]
+        DG3["navigation-flow · user-flow"]
+        DG4["folder-structure · repository-structure"]
+        DG5["ci-cd-pipeline"]
+    end
+
+    ROOT --> APPS["apps/ (mobile + api)"]
+    ROOT --> PKG["packages/"]
+    ROOT --> SCR["scripts/ (dev-api.sh · dev-mobile.sh · check.sh)"]
+    ROOT --> TESTS["tests/"]
+    ROOT --> ASST["assets/"]
+    ROOT --> RV["render.yaml (Render blueprint)"]
+
+    ROOT --> GH
+    ROOT --> GOV
+    ROOT --> DOC
+    ROOT --> DIAG
+    GH --> CI
+    GOV --> README
+    GOV --> LIC
+    GOV --> CONTRIB
+    GOV --> SEC
+    DOC --> D1
+    DOC --> D2
+    DOC --> D3
+    DOC --> D4
+    DOC --> D5
+    DIAG --> DG1
+    DIAG --> DG2
+    DIAG --> DG3
+    DIAG --> DG4
+    DIAG --> DG5

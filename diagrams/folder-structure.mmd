@@ -1,0 +1,107 @@
+%% TitanFit monorepo — repository tree
+%% Top-level layout with key subfolders of apps/mobile and apps/api.
+flowchart TD
+
+    ROOT["titanfit/ (monorepo root)"]
+
+    ROOT --> ROOTFILES["Root files: README.md · LICENSE · CONTRIBUTING.md<br/>SECURITY.md · CHANGELOG.md · CODE_OF_CONDUCT.md · render.yaml"]
+
+    subgraph APPS["apps/"]
+        direction LR
+        MOBILE["apps/mobile — Flutter app"]
+        API["apps/api — Node/TS/Express/Prisma"]
+    end
+
+    subgraph MLIB["apps/mobile/lib"]
+        MCORE["core/ — router · network · theme · services · widgets"]
+        MDATA["data/ — models · repositories"]
+        MFEAT["features/"]
+        MF1["auth · dashboard · workouts"]
+        MF2["habits · sleep · progress"]
+        MF3["profile · reminders · notifications"]
+        MFEAT --> MF1
+        MFEAT --> MF2
+        MFEAT --> MF3
+    end
+
+    subgraph ASRC["apps/api/src"]
+        ACONFIG["config/"]
+        AROUTES["routes/"]
+        ACTRL["controllers/"]
+        AMID["middleware/"]
+        ASVC["services/"]
+        ATYPES["types/"]
+        AUTILS["utils/"]
+    end
+
+    subgraph APRISMA["apps/api/prisma"]
+        APSCHEMA["schema.prisma (PostgreSQL datasource)"]
+        AMIG["migrations/"]
+    end
+
+    subgraph DOCS["docs/"]
+        D1["architecture/ · api/ · deployment/"]
+        D2["decisions/ (ADRs) · specifications/"]
+        D3["testing/ · audit/ · diagrams/"]
+    end
+
+    subgraph DIAGRAMS["diagrams/"]
+        DG1["9 Mermaid diagrams (.mmd)"]
+    end
+
+    subgraph ASSETS["assets/"]
+        AS1["branding/ · icons/ · images/ · screenshots/"]
+    end
+
+    subgraph SCRIPTS["scripts/"]
+        SC1["dev-api.sh · dev-mobile.sh · check.sh"]
+    end
+
+    subgraph PACKAGES["packages/"]
+        PK1["shared packages (README.md)"]
+    end
+
+    subgraph TESTS["tests/"]
+        T1["top-level test utilities (README.md)"]
+    end
+
+    subgraph GH["github/ — .github"]
+        GH1["workflows/ci.yml (backend + mobile + docker jobs)"]
+        GH2["dependabot.yml · ISSUE_TEMPLATE/"]
+    end
+
+    ROOT --> APPS
+    APPS --> MOBILE
+    APPS --> API
+    MOBILE --> MLIB
+    API --> ASRC
+    API --> APRISMA
+    ROOT --> DOCS
+    ROOT --> DIAGRAMS
+    ROOT --> ASSETS
+    ROOT --> SCRIPTS
+    ROOT --> PACKAGES
+    ROOT --> TESTS
+    ROOT --> GH
+    GH --> GH1
+    GH --> GH2
+    DOCS --> D1
+    DOCS --> D2
+    DOCS --> D3
+    ASSETS --> AS1
+    SCRIPTS --> SC1
+    PACKAGES --> PK1
+    TESTS --> T1
+    MLIB --> MCORE
+    MLIB --> MDATA
+    MLIB --> MFEAT
+    ASRC --> ACONFIG
+    ASRC --> AROUTES
+    ASRC --> ACTRL
+    ASRC --> AMID
+    ASRC --> ASVC
+    ASRC --> ATYPES
+    ASRC --> AUTILS
+    APRISMA --> APSCHEMA
+    APRISMA --> AMIG
+    DIAGRAMS --> DG1

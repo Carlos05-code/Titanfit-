@@ -1,0 +1,41 @@
+%% TitanFit — Workout session (on-device)
+%% Start -> per-second timer -> log set -> update progress -> end ->
+%% POST /api/workouts with offline fallback into secure storage queue.
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant SCREEN as WorkoutSessionScreen
+    participant TIMER as Session Timer
+    participant PROV as WorkoutProvider (Riverpod)
+    participant STG as flutter_secure_storage (offline queue)
+    participant API as REST API
+    participant DB as PostgreSQL (Prisma)
+
+    Note over U,DB: START SESSION
+    U->>SCREEN: tap "Start session"
+    SCREEN->>PROV: startSession()
+    SCREEN->>TIMER: begin ticking
+
+    loop every second
+        TIMER-->>SCREEN: elapsed tick -> update elapsed / calories UI
+    end
+
+    Note over U,PROV: LOG SET + PROGRESS
+    U->>SCREEN: log set (exercise, sets, reps, weight)
+    SCREEN->>PROV: logSet(exerciseId, data)
+    PROV-->>SCREEN: updated session metrics (volume, duration)
+    U->>SCREEN: tap "Next exercise" (optional)
+
+    Note over U,DB: END SESSION
+    U->>SCREEN: tap "End session"
+    SCREEN->>PROV: endSession(summary)
+    alt API reachable (online)
+        PROV->>API: POST /api/workouts {title, date, duration, exercises[]}
+        API->>DB: create Workout + nested Exercise rows
+        DB-->>API: persisted workout
+        API-->>PROV: 201 Created
+    else offline (no connectivity / request failed)
+        PROV->>STG: append workout payload to offline queue
+        Note over STG: replayed later via POST /api/workouts<br/>when connectivity is restored
+    end
+    PROV-->>SCREEN: session saved -> navigate to /workouts

@@ -1,0 +1,47 @@
+%% TitanFit — Flutter go_router navigation flow
+%% Grounded in apps/mobile/lib/core/router/app_router.dart
+%% All authenticated routes live under a ShellRoute (MainShell) with a 5-tab bottom nav.
+flowchart TD
+
+    START(["App launch"])
+    START --> SPLASH["/splash — SplashScreen (initialLocation)"]
+
+    %% go_router.redirect logic (app_router.dart, redirect callback)
+    REDIR{"authState.isAuthenticated?<br/>+ is route in /login | /register | /splash?"}
+    SPLASH --> REDIR
+    REDIR -->|"!"<br/>not logged in"| LOGIN
+    REDIR -->|"logged in & on auth route (not /splash)"| DASH["/dashboard — DashboardScreen"]
+
+    subgraph AUTH["Pre-auth routes (no shell)"]
+        LOGIN["/login — LoginScreen"]
+        REGISTER["/register — RegisterScreen"]
+    end
+    LOGIN <-->|"toggle form"| REGISTER
+
+    subgraph SHELL["ShellRoute — MainShell (BottomNavigationBar)"]
+        direction TB
+        TABS["Tabs: Dashboard · Workouts · Habits · Sleep · Progress"]
+        DASH["/dashboard — DashboardScreen"]
+        WRK["/workouts — WorkoutScreen (list)"]
+        HAB["/habits — HabitsScreen"]
+        SLP["/sleep — SleepScreen"]
+        PRG["/progress — ProgressScreen"]
+        TABS --> DASH
+        TABS --> WRK
+        TABS --> HAB
+        TABS --> SLP
+        TABS --> PRG
+    end
+
+    subgraph SUB["Sub-pages within shell (pushes)"]
+        DET["/workouts/:id — WorkoutDetailScreen"]
+        SES["/workouts/session — WorkoutSessionScreen"]
+        PROF["/profile — ProfileScreen"]
+        REM["/reminders — RemindersScreen"]
+    end
+
+    LOGIN -->|"authenticated redirect"| SHELL
+    WRK --> DET
+    WRK --> SES
+    DASH --> PROF
+    DASH --> REM

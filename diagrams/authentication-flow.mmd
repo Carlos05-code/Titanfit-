@@ -1,0 +1,53 @@
+%% TitanFit — Authentication flow
+%% register/login -> bcrypt -> JWT access(15m) + refresh(7d)
+%% secure storage -> interceptor auto-refresh on 401 -> rotate -> logout revokes refresh.
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant APP as Flutter App
+    participant STG as flutter_secure_storage
+    participant API as Express REST API
+    participant AUTH as AuthService
+    participant DB as PostgreSQL (Prisma)
+
+    Note over U,DB: REGISTER
+    U->>APP: submit registration form
+    APP->>API: POST /api/auth/register {email, password, name}
+    API->>AUTH: validate payload
+    AUTH->>AUTH: bcrypt.hash(password, 10)
+    AUTH->>DB: create User (email is unique)
+    DB-->>AUTH: user row
+    API-->>APP: 201 Created
+
+    Note over U,DB: LOGIN
+    U->>APP: submit login form
+    APP->>API: POST /api/auth/login {email, password}
+    API->>DB: find User by email
+    DB-->>API: stored bcrypt hash
+    API->>AUTH: bcrypt.compare(password, hash)
+    AUTH->>AUTH: verified -> sign JWTs
+    API-->>APP: accessToken (TTL 15 min) + refreshToken (TTL 7 days)
+    APP->>STG: persist both tokens (secure storage)
+
+    Note over U,STG: AUTHENTICATED REQUESTS + AUTO-REFRESH
+    APP->>API: request with Authorization: Bearer accessToken
+    alt access token still valid
+        API-->>APP: 200 OK
+    else access token expired
+        API-->>APP: 401 Unauthorized
+        APP->>STG: read refreshToken
+        APP->>API: POST /api/auth/refresh {refreshToken}
+        API->>AUTH: rotate -> issue new access + refresh pair
+        AUTH->>DB: update User.refreshToken (invalidate old)
+        API-->>APP: new token pair
+        APP->>STG: overwrite stored tokens
+        APP->>API: retry original request with new accessToken
+    end
+
+    Note over U,STG: LOGOUT
+    U->>APP: sign out
+    APP->>API: POST /api/auth/logout {refreshToken}
+    API->>AUTH: revoke refresh token
+    AUTH->>DB: clear User.refreshToken
+    API-->>APP: 204 No Content
+    APP->>STG: clear tokens

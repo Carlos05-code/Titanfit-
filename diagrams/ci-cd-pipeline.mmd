@@ -1,0 +1,52 @@
+%% TitanFit — CI/CD pipeline
+%% Triggered by push to main / pull_request / manual dispatch on .github/workflows/ci.yml.
+%% Concurrency: group = ci-<ref>, cancel-in-progress = true (per-branch single run).
+flowchart LR
+
+    subgraph TRIG["Triggers (on:)"]
+        PUSH["push: main"]
+        PR["pull_request"]
+        MAN["workflow_dispatch (manual)"]
+    end
+
+    GHA["GitHub Actions — .github/workflows/ci.yml"]
+    PUSH --> GHA
+    PR --> GHA
+    MAN --> GHA
+
+    CONC["concurrency: group ci-<ref><br/>cancel-in-progress: true"]
+
+    GHA --> BACKEND
+    GHA --> MOBILE
+    GHA --> DOCKER
+
+    subgraph BACKEND["job: Backend · build + test<br/>ubuntu-latest · Node.js 22 · apps/api"]
+        B1["actions/checkout@v4"]
+        B2["setup-node@v4 + npm ci"]
+        B3["npx prisma generate"]
+        B4["npx prisma validate"]
+        B5["npm run build (tsc)"]
+        B6["npm test"]
+        B1 --> B2 --> B3 --> B4 --> B5 --> B6
+    end
+
+    subgraph MOBILE["job: Mobile · format + analyze + test<br/>ubuntu-latest · Flutter 3.35.6 stable · apps/mobile"]
+        M1["actions/checkout@v4"]
+        M2["subosito/flutter-action@v2 + flutter pub get"]
+        M3["dart format --set-exit-if-changed"]
+        M4["flutter analyze"]
+        M5["flutter test"]
+        M1 --> M2 --> M3 --> M4 --> M5
+    end
+
+    subgraph DOCKER["job: API · docker build<br/>ubuntu-latest"]
+        D1["actions/checkout@v4"]
+        D2["docker build -t titanfit-api:ci apps/api"]
+        D1 --> D2
+    end
+
+    BACKEND --> GATE{All checks green}
+    MOBILE --> GATE
+    DOCKER --> GATE
+
+    GATE -->|"push on main only"| RENDER["Deploy — Render<br/>web service from Docker image + managed PostgreSQL<br/>(titanfit-api.onrender.com)"]
