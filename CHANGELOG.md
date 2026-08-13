@@ -14,21 +14,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mermaid diagrams under `diagrams/`.
 - GitHub Actions CI pipeline (analyze, lint, test, build, format) + Dependabot.
 - Jest test suite for the backend; Flutter unit tests for validators & helpers.
+- Live smoke-test suite (`scripts/smoke-api.mjs`) and DB cleanup helper (`scripts/delete-user.mjs`).
 
 ### Changed
 - Backend hardened: helmet, express-rate-limit, CORS allowlist, centralized error handling,
-  Zod validation across all routes, transactional XP award, fallback-secret removal.
+  Zod validation (strict whitelists) across all routes, transactional XP award, fallback-secret removal.
+- API moved from PUT to PATCH semantics for partial updates; mobile client aligned.
 - Mobile: dead code removed, synthesized/fake chart data replaced with provider-fed data,
   shared widgets extracted, accessibility (Semantics, SafeArea, hit targets) improved.
+- Whole codebase normalized with `dart format`; analyzer runs clean.
 
 ### Fixed
 - README encoding corruption (UTF-16 tail removed).
 - `Validators.email` rejecting/accepting malformed addresses (spaces) — stricter regex.
 - Bottom-navigation highlight while on Profile / Reminders / Session screens.
+- Refresh failures no longer wipe local user data (`deleteAll` → scoped token removal).
+- Concurrent 401s now share a single refresh call (single-flight).
 
 ### Security
 - Removed hardcoded JWT fallback secrets from production behavior.
 - No more raw `error.message` leakage to clients.
+- Sleep XP can no longer be farmed: one record per UTC day.
 
 ## [1.0.0] - 2026-08-04
 

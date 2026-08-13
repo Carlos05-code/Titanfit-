@@ -34,7 +34,11 @@ jobs:
       - name: Generate Prisma client
         run: npx prisma generate
 
+      # `prisma validate` resolves the datasource url at parse time; the
+      # variable must exist even though no connection is made here.
       - name: Validate Prisma schema
+        env:
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci?schema=public
         run: npx prisma validate
 
       - name: Type-check & build
