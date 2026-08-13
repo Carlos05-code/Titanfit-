@@ -6,21 +6,6 @@ import { CreateWorkoutBody, UpdateWorkoutBody } from '../validators';
 const WORKOUT_XP = 50;
 const XP_PER_LEVEL = 1000;
 
-/** Award XP and raise the user's level atomically. */
-async function awardXp(userId: string, points: number) {
-  const user = await prisma.user.update({
-    where: { id: userId },
-    data: { xpPoints: { increment: points } },
-  });
-  const newLevel = calculateLevel(user.xpPoints, XP_PER_LEVEL);
-  if (newLevel > user.level) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: { level: newLevel },
-    });
-  }
-}
-
 export class WorkoutService {
   async getAll(userId: string, page: number, limit: number) {
     const skip = (page - 1) * limit;

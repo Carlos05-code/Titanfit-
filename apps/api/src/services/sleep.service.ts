@@ -27,6 +27,19 @@ export class SleepService {
 
     // Persist the record and award XP atomically.
     const record = await prisma.$transaction(async (tx) => {
+      // One record per UTC day — the XP award must not be farmable.
+      const dayStart = new Date(sleep);
+      dayStart.setUTCHours(0, 0, 0, 0);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setUTCDate(dayEnd.getUTCDate() + 1);
+
+      const existingCount = await tx.sleepRecord.count({
+        where: { userId, sleepTime: { gte: dayStart, lt: dayEnd } },
+      });
+      if (existingCount > 0) {
+        throw AppError.conflict('A sleep record already exists for this day');
+      }
+
       const created = await tx.sleepRecord.create({
         data: { userId, sleepTime: sleep, wakeTime: wake, duration: durationHours, score },
       });
