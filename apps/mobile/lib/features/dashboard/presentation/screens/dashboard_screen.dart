@@ -57,9 +57,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
               children: [
                 const Icon(Icons.notifications_outlined),
                 Positioned(
-                  right: 2, top: 2,
+                  right: 2,
+                  top: 2,
                   child: Container(
-                    width: 8, height: 8,
+                    width: 8,
+                    height: 8,
                     decoration: const BoxDecoration(
                       color: AppColors.accent,
                       shape: BoxShape.circle,
@@ -192,7 +194,8 @@ class _SectionTitle extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 3, height: 18,
+          width: 3,
+          height: 18,
           decoration: BoxDecoration(
             color: AppColors.primary,
             borderRadius: BorderRadius.circular(2),
@@ -252,7 +255,8 @@ class _LevelCard extends StatelessWidget {
                 ],
               ),
               Container(
-                width: 56, height: 56,
+                width: 56,
+                height: 56,
                 decoration: BoxDecoration(
                   color: AppColors.background.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
@@ -300,11 +304,21 @@ class _WeeklyChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final workouts = (stats?['weeklyWorkouts'] as List?)?.length ?? 5;
-    final spots = List.generate(7, (i) {
-      final val = i < workouts ? (i + 1) * 15.0 : 0.0;
-      return FlSpot(i.toDouble(), val);
-    });
+    final weekly = (stats?['weeklyWorkouts'] as List?) ?? const [];
+    // Aggregate total workout minutes per day for the last 7 days.
+    final totals = List<double>.filled(7, 0);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    for (final entry in weekly) {
+      final date = DateTime.parse(entry['date'] as String);
+      final day = DateTime(date.year, date.month, date.day);
+      final diff = today.difference(day).inDays;
+      if (diff >= 0 && diff < 7) {
+        totals[6 - diff] += ((entry['duration'] as num?) ?? 0).toDouble();
+      }
+    }
+    final spots = List.generate(7, (i) => FlSpot(i.toDouble(), totals[i]));
+    final hasData = totals.any((t) => t > 0);
 
     return Container(
       height: 180,
@@ -313,71 +327,76 @@ class _WeeklyChart extends StatelessWidget {
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: LineChart(
-        LineChartData(
-          gridData: FlGridData(
-            show: true,
-            horizontalInterval: 25,
-            drawVerticalLine: false,
-            getDrawingHorizontalLine: (value) => FlLine(
-              color: AppColors.divider,
-              strokeWidth: 1,
-            ),
-          ),
-          titlesData: FlTitlesData(
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 22,
-                getTitlesWidget: (value, meta) {
-                  const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-                  return Text(
-                    days[value.toInt().clamp(0, 6)],
-                    style: const TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 10,
+      child: hasData
+          ? LineChart(
+              LineChartData(
+                gridData: FlGridData(
+                  show: true,
+                  horizontalInterval: 25,
+                  drawVerticalLine: false,
+                  getDrawingHorizontalLine: (value) =>
+                      FlLine(color: AppColors.divider, strokeWidth: 1),
+                ),
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 22,
+                      getTitlesWidget: (value, meta) {
+                        const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+                        return Text(
+                          days[value.toInt().clamp(0, 6)],
+                          style: const TextStyle(
+                            color: AppColors.textMuted,
+                            fontSize: 10,
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
-            topTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            rightTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-          ),
-          borderData: FlBorderData(show: false),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              color: AppColors.primary,
-              barWidth: 3,
-              isStrokeCapRound: true,
-              dotData: FlDotData(
-                show: true,
-                getDotPainter: (spot, percent, barData, index) {
-                  return FlDotCirclePainter(
-                    radius: 3,
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: spots,
+                    isCurved: true,
                     color: AppColors.primary,
-                    strokeWidth: 2,
-                    strokeColor: AppColors.background,
-                  );
-                },
+                    barWidth: 3,
+                    isStrokeCapRound: true,
+                    dotData: FlDotData(
+                      show: true,
+                      getDotPainter: (spot, percent, barData, index) {
+                        return FlDotCirclePainter(
+                          radius: 3,
+                          color: AppColors.primary,
+                          strokeWidth: 2,
+                          strokeColor: AppColors.background,
+                        );
+                      },
+                    ),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                    ),
+                  ),
+                ],
               ),
-              belowBarData: BarAreaData(
-                show: true,
-                color: AppColors.primary.withValues(alpha: 0.1),
+            )
+          : const Center(
+              child: Text(
+                'Log a workout to see your weekly trend',
+                style: TextStyle(color: AppColors.textMuted, fontSize: 12),
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -411,7 +430,13 @@ class _QuickAction extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: 28),
               const SizedBox(height: 8),
-              Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
             ],
           ),
         ),
@@ -455,7 +480,9 @@ class _RestDayCard extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: urgent ? AppColors.error.withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.2),
+          color: urgent
+              ? AppColors.error.withValues(alpha: 0.3)
+              : AppColors.primary.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -465,7 +492,9 @@ class _RestDayCard extends StatelessWidget {
             margin: const EdgeInsets.only(top: 2),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: urgent ? AppColors.error.withValues(alpha: 0.15) : AppColors.primary.withValues(alpha: 0.15),
+              color: urgent
+                  ? AppColors.error.withValues(alpha: 0.15)
+                  : AppColors.primary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -479,11 +508,23 @@ class _RestDayCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(restSug.title, style: const TextStyle(
-                  fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                Text(
+                  restSug.title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(restSug.message, style: const TextStyle(
-                  fontSize: 12, color: AppColors.textSecondary, height: 1.4)),
+                Text(
+                  restSug.message,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
               ],
             ),
           ),
@@ -502,8 +543,8 @@ class _SleepRecCard extends StatelessWidget {
     final color = rec.level == SleepAlertLevel.good
         ? AppColors.primary
         : rec.level == SleepAlertLevel.fair
-            ? AppColors.accentYellow
-            : AppColors.error;
+        ? AppColors.accentYellow
+        : AppColors.error;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -532,15 +573,33 @@ class _SleepRecCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(rec.title, style: const TextStyle(
-                  fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                Text(
+                  rec.title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(rec.message, style: const TextStyle(
-                  fontSize: 12, color: AppColors.textSecondary, height: 1.4)),
+                Text(
+                  rec.message,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
                 if (rec.tip != null) ...[
                   const SizedBox(height: 4),
-                  Text('💡 ${rec.tip}', style: const TextStyle(
-                    fontSize: 11, color: AppColors.textMuted, fontStyle: FontStyle.italic)),
+                  Text(
+                    '💡 ${rec.tip}',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textMuted,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -555,7 +614,11 @@ class _HabitPreview extends StatelessWidget {
   final String habit;
   final bool done;
   final VoidCallback onTap;
-  const _HabitPreview({required this.habit, required this.done, required this.onTap});
+  const _HabitPreview({
+    required this.habit,
+    required this.done,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -571,9 +634,11 @@ class _HabitPreview extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 44, height: 44,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
-                color: (done ? AppColors.primary : AppColors.accentYellow).withValues(alpha: 0.1),
+                color: (done ? AppColors.primary : AppColors.accentYellow)
+                    .withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(

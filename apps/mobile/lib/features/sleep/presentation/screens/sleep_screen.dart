@@ -44,7 +44,10 @@ class _SleepScreenState extends ConsumerState<SleepScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _SleepScoreCard(score: state.avgScore.toInt(), avgDuration: state.avgDuration),
+            _SleepScoreCard(
+              score: state.avgScore.toInt(),
+              avgDuration: state.avgDuration,
+            ),
             const SizedBox(height: 16),
             _SleepRecBanner(),
             const SizedBox(height: 24),
@@ -55,10 +58,15 @@ class _SleepScreenState extends ConsumerState<SleepScreen> {
             const _SectionTitle(title: 'Recent Records'),
             const SizedBox(height: 12),
             if (state.records.isEmpty)
-              const Center(child: Padding(
-                padding: EdgeInsets.all(32),
-                child: Text('No sleep records yet', style: TextStyle(color: AppColors.textMuted)),
-              ))
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Text(
+                    'No sleep records yet',
+                    style: TextStyle(color: AppColors.textMuted),
+                  ),
+                ),
+              )
             else
               ...state.records.map((r) => _SleepRecordCard(r)),
           ],
@@ -71,10 +79,12 @@ class _SleepScreenState extends ConsumerState<SleepScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.surface,
-      builder: (ctx) => _LogSleepSheet(onLog: (sleepTime, wakeTime) {
-        ref.read(sleepProvider.notifier).recordSleep(sleepTime, wakeTime);
-        Navigator.pop(ctx);
-      }),
+      builder: (ctx) => _LogSleepSheet(
+        onLog: (sleepTime, wakeTime) {
+          ref.read(sleepProvider.notifier).recordSleep(sleepTime, wakeTime);
+          Navigator.pop(ctx);
+        },
+      ),
     );
   }
 }
@@ -86,7 +96,11 @@ class _SleepScoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = score >= 80 ? AppColors.primary : score >= 60 ? AppColors.accentYellow : Colors.redAccent;
+    final color = score >= 80
+        ? AppColors.primary
+        : score >= 60
+        ? AppColors.accentYellow
+        : Colors.redAccent;
     final hours = avgDuration > 0 ? avgDuration.toStringAsFixed(1) : '--';
     return Container(
       padding: const EdgeInsets.all(24),
@@ -102,12 +116,14 @@ class _SleepScoreCard extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: 90, height: 90,
+            width: 90,
+            height: 90,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 SizedBox(
-                  width: 90, height: 90,
+                  width: 90,
+                  height: 90,
                   child: CircularProgressIndicator(
                     value: score / 100,
                     strokeWidth: 8,
@@ -115,7 +131,14 @@ class _SleepScoreCard extends StatelessWidget {
                     valueColor: AlwaysStoppedAnimation(color),
                   ),
                 ),
-                Text('$score', style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
+                Text(
+                  '$score',
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -124,18 +147,39 @@ class _SleepScoreCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Sleep Score', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                const Text(
+                  'Sleep Score',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
-                  score >= 80 ? 'Great sleep quality!' : score >= 60 ? 'Room for improvement' : 'Needs work',
+                  score >= 80
+                      ? 'Great sleep quality!'
+                      : score >= 60
+                      ? 'Room for improvement'
+                      : 'Needs work',
                   style: TextStyle(color: color, fontSize: 14),
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.bedtime, size: 16, color: AppColors.accentPurple),
+                    const Icon(
+                      Icons.bedtime,
+                      size: 16,
+                      color: AppColors.accentPurple,
+                    ),
                     const SizedBox(width: 4),
-                    Text('${hours}h avg', style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                    Text(
+                      '${hours}h avg',
+                      style: const TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -157,8 +201,8 @@ class _SleepRecBanner extends ConsumerWidget {
     final color = rec.level == SleepAlertLevel.good
         ? AppColors.primary
         : rec.level == SleepAlertLevel.fair
-            ? AppColors.accentYellow
-            : AppColors.error;
+        ? AppColors.accentYellow
+        : AppColors.error;
 
     return GestureDetector(
       onTap: () {},
@@ -184,8 +228,11 @@ class _SleepRecBanner extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
-                rec.level == SleepAlertLevel.good ? Icons.check_circle : Icons.info_outline,
-                color: color, size: 20,
+                rec.level == SleepAlertLevel.good
+                    ? Icons.check_circle
+                    : Icons.info_outline,
+                color: color,
+                size: 20,
               ),
             ),
             const SizedBox(width: 12),
@@ -193,15 +240,33 @@ class _SleepRecBanner extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(rec.title, style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                  Text(
+                    rec.title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(rec.message, style: const TextStyle(
-                    fontSize: 12, color: AppColors.textSecondary, height: 1.4)),
+                  Text(
+                    rec.message,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
                   if (rec.tip != null) ...[
                     const SizedBox(height: 4),
-                    Text('💡 ${rec.tip}', style: const TextStyle(
-                      fontSize: 11, color: AppColors.textMuted, fontStyle: FontStyle.italic)),
+                    Text(
+                      '💡 ${rec.tip}',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textMuted,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
                   ],
                 ],
               ),
@@ -222,8 +287,10 @@ class _SleepWeeklyChart extends StatelessWidget {
     final last7 = records.take(7).toList().reversed.toList();
     final spots = List.generate(last7.length, (i) {
       final r = last7[i];
-      return FlSpot(i.toDouble(), (r.duration as num?)?.toDouble() ?? 7.0);
-    });
+      final duration = (r.duration as num?)?.toDouble();
+      if (duration == null || duration <= 0) return null;
+      return FlSpot(i.toDouble(), duration);
+    }).whereType<FlSpot>().toList();
 
     return Container(
       height: 160,
@@ -233,47 +300,82 @@ class _SleepWeeklyChart extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: spots.isEmpty
-        ? const Center(child: Text('No data', style: TextStyle(color: AppColors.textMuted)))
-        : LineChart(LineChartData(
-            gridData: FlGridData(
-              show: true,
-              horizontalInterval: 2,
-              drawVerticalLine: false,
-              getDrawingHorizontalLine: (value) => FlLine(color: AppColors.divider, strokeWidth: 1),
-            ),
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 22,
-                  getTitlesWidget: (value, meta) {
-                    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                    return Text(days[value.toInt().clamp(0, 6)], style: const TextStyle(color: AppColors.textMuted, fontSize: 10));
-                  },
-                ),
+          ? const Center(
+              child: Text(
+                'No data',
+                style: TextStyle(color: AppColors.textMuted),
               ),
-              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            ),
-            borderData: FlBorderData(show: false),
-            lineBarsData: [
-              LineChartBarData(
-                spots: spots,
-                isCurved: true,
-                color: AppColors.accentPurple,
-                barWidth: 3,
-                isStrokeCapRound: true,
-                dotData: FlDotData(
+            )
+          : LineChart(
+              LineChartData(
+                gridData: FlGridData(
                   show: true,
-                  getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-                    radius: 4, color: AppColors.accentPurple, strokeWidth: 2, strokeColor: AppColors.background,
+                  horizontalInterval: 2,
+                  drawVerticalLine: false,
+                  getDrawingHorizontalLine: (value) =>
+                      FlLine(color: AppColors.divider, strokeWidth: 1),
+                ),
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 22,
+                      getTitlesWidget: (value, meta) {
+                        const days = [
+                          'Mon',
+                          'Tue',
+                          'Wed',
+                          'Thu',
+                          'Fri',
+                          'Sat',
+                          'Sun',
+                        ];
+                        return Text(
+                          days[value.toInt().clamp(0, 6)],
+                          style: const TextStyle(
+                            color: AppColors.textMuted,
+                            fontSize: 10,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
                   ),
                 ),
-                belowBarData: BarAreaData(show: true, color: AppColors.accentPurple.withValues(alpha: 0.1)),
+                borderData: FlBorderData(show: false),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: spots,
+                    isCurved: true,
+                    color: AppColors.accentPurple,
+                    barWidth: 3,
+                    isStrokeCapRound: true,
+                    dotData: FlDotData(
+                      show: true,
+                      getDotPainter: (spot, percent, barData, index) =>
+                          FlDotCirclePainter(
+                            radius: 4,
+                            color: AppColors.accentPurple,
+                            strokeWidth: 2,
+                            strokeColor: AppColors.background,
+                          ),
+                    ),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: AppColors.accentPurple.withValues(alpha: 0.1),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          )),
+            ),
     );
   }
 }
@@ -286,11 +388,23 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(width: 3, height: 18,
-          decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(2)),
+        Container(
+          width: 3,
+          height: 18,
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(2),
+          ),
         ),
         const SizedBox(width: 8),
-        Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
       ],
     );
   }
@@ -303,7 +417,11 @@ class _SleepRecordCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final score = record.score.toInt();
-    final color = score >= 80 ? AppColors.primary : score >= 60 ? AppColors.accentYellow : Colors.redAccent;
+    final color = score >= 80
+        ? AppColors.primary
+        : score >= 60
+        ? AppColors.accentYellow
+        : Colors.redAccent;
     final duration = record.duration;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -316,7 +434,8 @@ class _SleepRecordCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 44, height: 44,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               color: AppColors.accentPurple.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
@@ -328,17 +447,31 @@ class _SleepRecordCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${duration.toStringAsFixed(1)} hours',
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                Text(
+                  '${duration.toStringAsFixed(1)} hours',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Row(
                   children: [
                     Icon(Icons.stars, size: 14, color: color),
                     const SizedBox(width: 4),
-                    Text('Score: $score', style: TextStyle(color: color, fontSize: 12)),
+                    Text(
+                      'Score: $score',
+                      style: TextStyle(color: color, fontSize: 12),
+                    ),
                     const SizedBox(width: 16),
-                    Text(formatDate(record.createdAt ?? DateTime.now()),
-                      style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                    Text(
+                      formatDate(record.createdAt ?? DateTime.now()),
+                      style: const TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -365,28 +498,67 @@ class _LogSleepSheetState extends State<_LogSleepSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Log Sleep', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          const Text(
+            'Log Sleep',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
           const SizedBox(height: 24),
           ListTile(
-            leading: const Icon(Icons.nightlight_round, color: AppColors.accentPurple),
-            title: const Text('Sleep Time', style: TextStyle(color: AppColors.textSecondary)),
-            trailing: Text(_sleepTime.format(context), style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+            leading: const Icon(
+              Icons.nightlight_round,
+              color: AppColors.accentPurple,
+            ),
+            title: const Text(
+              'Sleep Time',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+            trailing: Text(
+              _sleepTime.format(context),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             onTap: () async {
-              final t = await showTimePicker(context: context, initialTime: _sleepTime);
+              final t = await showTimePicker(
+                context: context,
+                initialTime: _sleepTime,
+              );
               if (t != null) setState(() => _sleepTime = t);
             },
           ),
           ListTile(
             leading: const Icon(Icons.wb_sunny, color: AppColors.accentYellow),
-            title: const Text('Wake Time', style: TextStyle(color: AppColors.textSecondary)),
-            trailing: Text(_wakeTime.format(context), style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+            title: const Text(
+              'Wake Time',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+            trailing: Text(
+              _wakeTime.format(context),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             onTap: () async {
-              final t = await showTimePicker(context: context, initialTime: _wakeTime);
+              final t = await showTimePicker(
+                context: context,
+                initialTime: _wakeTime,
+              );
               if (t != null) setState(() => _wakeTime = t);
             },
           ),
@@ -396,9 +568,24 @@ class _LogSleepSheetState extends State<_LogSleepSheet> {
             child: ElevatedButton(
               onPressed: () {
                 final now = DateTime.now();
-                final sleepDt = DateTime(now.year, now.month, now.day, _sleepTime.hour, _sleepTime.minute);
-                final wakeDt = DateTime(now.year, now.month, now.day, _wakeTime.hour, _wakeTime.minute);
-                widget.onLog(sleepDt.toIso8601String(), wakeDt.toIso8601String());
+                final sleepDt = DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  _sleepTime.hour,
+                  _sleepTime.minute,
+                );
+                final wakeDt = DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  _wakeTime.hour,
+                  _wakeTime.minute,
+                );
+                widget.onLog(
+                  sleepDt.toIso8601String(),
+                  wakeDt.toIso8601String(),
+                );
               },
               child: const Text('SAVE'),
             ),
