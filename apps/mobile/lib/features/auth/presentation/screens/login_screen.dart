@@ -27,10 +27,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authProvider.notifier).login(
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
+      ref
+          .read(authProvider.notifier)
+          .login(_emailController.text.trim(), _passwordController.text);
     }
   }
 
@@ -100,7 +99,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ? Icons.visibility_off
                             : Icons.visibility,
                       ),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
                   obscureText: _obscurePassword,
@@ -117,10 +117,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 SizedBox(
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: authState.status == AuthStatus.loading ? null : _submit,
+                    onPressed: authState.status == AuthStatus.loading
+                        ? null
+                        : _submit,
                     child: authState.status == AuthStatus.loading
                         ? const SizedBox(
-                            width: 24, height: 24,
+                            width: 24,
+                            height: 24,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Text('LOGIN'),

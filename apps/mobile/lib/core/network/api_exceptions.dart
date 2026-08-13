@@ -17,6 +17,5 @@ class NotFoundException extends ApiException {
 }
 
 class ServerException extends ApiException {
-  ServerException([super.message = 'Server error'])
-      : super(statusCode: 500);
+  ServerException([super.message = 'Server error']) : super(statusCode: 500);
 }

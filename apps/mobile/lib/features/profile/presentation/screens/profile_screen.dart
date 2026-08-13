@@ -89,13 +89,23 @@ class ProfileScreen extends ConsumerWidget {
               icon: Icons.height,
               label: 'Height',
               value: user?.height != null ? '${user!.height} cm' : 'Not set',
-              onEdit: () => _showEditDialog(context, ref, 'height', user?.height?.toString() ?? ''),
+              onEdit: () => _showEditDialog(
+                context,
+                ref,
+                'height',
+                user?.height?.toString() ?? '',
+              ),
             ),
             _BodyDataTile(
               icon: Icons.monitor_weight,
               label: 'Weight',
               value: user?.weight != null ? '${user!.weight} kg' : 'Not set',
-              onEdit: () => _showEditDialog(context, ref, 'weight', user?.weight?.toString() ?? ''),
+              onEdit: () => _showEditDialog(
+                context,
+                ref,
+                'weight',
+                user?.weight?.toString() ?? '',
+              ),
             ),
             if (user?.fitnessLevel != null)
               _ProfileInfoTile(
@@ -112,11 +122,16 @@ class ProfileScreen extends ConsumerWidget {
                   context.go('/login');
                 },
                 icon: const Icon(Icons.logout, color: AppColors.error),
-                label: const Text('Logout', style: TextStyle(color: AppColors.error)),
+                label: const Text(
+                  'Logout',
+                  style: TextStyle(color: AppColors.error),
+                ),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: AppColors.error),
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -126,7 +141,12 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  void _showEditDialog(BuildContext context, WidgetRef ref, String field, String current) {
+  void _showEditDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String field,
+    String current,
+  ) {
     final ctrl = TextEditingController(text: current);
     showDialog(
       context: context,
@@ -167,7 +187,11 @@ class _ProfileInfoTile extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  const _ProfileInfoTile({required this.icon, required this.label, required this.value});
+  const _ProfileInfoTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -175,19 +199,26 @@ class _ProfileInfoTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: Container(
-          width: 40, height: 40,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             color: AppColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: AppColors.primary),
         ),
-        title: Text(label, style: const TextStyle(color: AppColors.textSecondary)),
-        trailing: Text(value, style: const TextStyle(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        )),
+        title: Text(
+          label,
+          style: const TextStyle(color: AppColors.textSecondary),
+        ),
+        trailing: Text(
+          value,
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
       ),
     );
   }
@@ -198,7 +229,12 @@ class _BodyDataTile extends StatelessWidget {
   final String label;
   final String value;
   final VoidCallback onEdit;
-  const _BodyDataTile({required this.icon, required this.label, required this.value, required this.onEdit});
+  const _BodyDataTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.onEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -206,22 +242,29 @@ class _BodyDataTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: Container(
-          width: 40, height: 40,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             color: AppColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: AppColors.primary),
         ),
-        title: Text(label, style: const TextStyle(color: AppColors.textSecondary)),
+        title: Text(
+          label,
+          style: const TextStyle(color: AppColors.textSecondary),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(value, style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            )),
+            Text(
+              value,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
             const SizedBox(width: 8),
             GestureDetector(
               onTap: onEdit,
@@ -231,7 +274,11 @@ class _BodyDataTile extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.edit, size: 16, color: AppColors.primary),
+                child: const Icon(
+                  Icons.edit,
+                  size: 16,
+                  color: AppColors.primary,
+                ),
               ),
             ),
           ],

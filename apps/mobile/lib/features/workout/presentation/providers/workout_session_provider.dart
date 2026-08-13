@@ -86,7 +86,9 @@ class WorkoutSessionState {
   }
 
   SessionExercise? get currentExercise =>
-      currentExerciseIndex < exercises.length ? exercises[currentExerciseIndex] : null;
+      currentExerciseIndex < exercises.length
+      ? exercises[currentExerciseIndex]
+      : null;
 }
 
 class WorkoutSessionNotifier extends StateNotifier<WorkoutSessionState> {
@@ -99,12 +101,16 @@ class WorkoutSessionNotifier extends StateNotifier<WorkoutSessionState> {
     state = WorkoutSessionState(
       status: SessionStatus.active,
       title: title,
-      exercises: exercises.map((e) => SessionExercise(
-        name: e.name,
-        targetSets: e.sets ?? 3,
-        targetReps: e.reps ?? 10,
-        targetWeight: e.weight ?? 0,
-      )).toList(),
+      exercises: exercises
+          .map(
+            (e) => SessionExercise(
+              name: e.name,
+              targetSets: e.sets ?? 3,
+              targetReps: e.reps ?? 10,
+              targetWeight: e.weight ?? 0,
+            ),
+          )
+          .toList(),
       currentExerciseIndex: 0,
       elapsedSeconds: 0,
     );
@@ -133,7 +139,11 @@ class WorkoutSessionNotifier extends StateNotifier<WorkoutSessionState> {
     }
 
     final setNumber = ex.completedSetCount + 1;
-    final tracked = TrackedSet(setNumber: setNumber, reps: reps, weight: weight);
+    final tracked = TrackedSet(
+      setNumber: setNumber,
+      reps: reps,
+      weight: weight,
+    );
     ex.completedSets.add(tracked);
     ex.targetWeight = weight > 0 ? weight : ex.targetWeight;
     ex.targetReps = reps > 0 ? reps : ex.targetReps;
@@ -154,7 +164,9 @@ class WorkoutSessionNotifier extends StateNotifier<WorkoutSessionState> {
         _restTimer?.cancel();
         state = state.copyWith(isResting: false, restSecondsRemaining: 0);
       } else {
-        state = state.copyWith(restSecondsRemaining: state.restSecondsRemaining - 1);
+        state = state.copyWith(
+          restSecondsRemaining: state.restSecondsRemaining - 1,
+        );
       }
     });
 
@@ -168,13 +180,17 @@ class WorkoutSessionNotifier extends StateNotifier<WorkoutSessionState> {
 
   void nextExercise() {
     if (state.currentExerciseIndex < state.exercises.length - 1) {
-      state = state.copyWith(currentExerciseIndex: state.currentExerciseIndex + 1);
+      state = state.copyWith(
+        currentExerciseIndex: state.currentExerciseIndex + 1,
+      );
     }
   }
 
   void prevExercise() {
     if (state.currentExerciseIndex > 0) {
-      state = state.copyWith(currentExerciseIndex: state.currentExerciseIndex - 1);
+      state = state.copyWith(
+        currentExerciseIndex: state.currentExerciseIndex - 1,
+      );
     }
   }
 
@@ -182,7 +198,10 @@ class WorkoutSessionNotifier extends StateNotifier<WorkoutSessionState> {
     _timer?.cancel();
     _restTimer?.cancel();
     final elapsed = state.elapsedSeconds;
-    final totalSets = state.exercises.fold(0, (s, e) => s + e.completedSetCount);
+    final totalSets = state.exercises.fold(
+      0,
+      (s, e) => s + e.completedSetCount,
+    );
     final totalReps = state.exercises.fold(0, (s, e) => s + e.totalReps);
     const calsPerMin = 7;
     final estCalories = (elapsed ~/ 60) * calsPerMin;
@@ -193,12 +212,17 @@ class WorkoutSessionNotifier extends StateNotifier<WorkoutSessionState> {
       'title': state.title,
       'duration': elapsed ~/ 60,
       'calories': estCalories,
-      'exercises': state.exercises.where((e) => e.completedSetCount > 0).map((e) => {
-        'name': e.name,
-        'sets': e.completedSetCount,
-        'reps': e.targetReps,
-        'weight': e.targetWeight,
-      }).toList(),
+      'exercises': state.exercises
+          .where((e) => e.completedSetCount > 0)
+          .map(
+            (e) => {
+              'name': e.name,
+              'sets': e.completedSetCount,
+              'reps': e.targetReps,
+              'weight': e.targetWeight,
+            },
+          )
+          .toList(),
       'totalSets': totalSets,
       'totalReps': totalReps,
     };
@@ -218,6 +242,7 @@ class WorkoutSessionNotifier extends StateNotifier<WorkoutSessionState> {
   }
 }
 
-final workoutSessionProvider = StateNotifierProvider<WorkoutSessionNotifier, WorkoutSessionState>((ref) {
-  return WorkoutSessionNotifier();
-});
+final workoutSessionProvider =
+    StateNotifierProvider<WorkoutSessionNotifier, WorkoutSessionState>((ref) {
+      return WorkoutSessionNotifier();
+    });

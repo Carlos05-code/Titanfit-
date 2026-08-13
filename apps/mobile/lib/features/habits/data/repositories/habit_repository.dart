@@ -35,32 +35,34 @@ class HabitRepository {
   }
 
   Future<Map<String, dynamic>> getStreaks() async {
-    return {
-      'currentStreak': 0,
-      'longestStreak': 0,
-      'disciplineScore': 0,
-    };
+    return {'currentStreak': 0, 'longestStreak': 0, 'disciplineScore': 0};
   }
 
   Future<List<HabitModel>> _getTodayLocal() async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final habits = await _getAllLocal();
-    return habits.where((h) =>
-        h.date.year == today.year &&
-        h.date.month == today.month &&
-        h.date.day == today.day).toList();
+    return habits
+        .where(
+          (h) =>
+              h.date.year == today.year &&
+              h.date.month == today.month &&
+              h.date.day == today.day,
+        )
+        .toList();
   }
 
   Future<HabitModel> _checkInLocal(String type) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final habits = await _getAllLocal();
-    final existing = habits.indexWhere((h) =>
-        h.type == type &&
-        h.date.year == today.year &&
-        h.date.month == today.month &&
-        h.date.day == today.day);
+    final existing = habits.indexWhere(
+      (h) =>
+          h.type == type &&
+          h.date.year == today.year &&
+          h.date.month == today.month &&
+          h.date.day == today.day,
+    );
 
     if (existing >= 0) {
       final updated = HabitModel(
@@ -89,7 +91,9 @@ class HabitRepository {
     final json = await _storage.read(key: 'local_habits');
     if (json == null) return [];
     final list = jsonDecode(json) as List;
-    return list.map((e) => HabitModel.fromJson(e as Map<String, dynamic>)).toList();
+    return list
+        .map((e) => HabitModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   Future<void> _saveAllLocal(List<HabitModel> habits) async {

@@ -30,26 +30,43 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
               children: [
                 const _HabitHeader(),
                 const SizedBox(height: 16),
-                ...HABIT_TYPES.map((type) => _HabitTile(
-                      type: type,
-                      isDone: state.habits
-                          .where((h) => h.type == type.key)
-                          .any((h) => h.completed),
-                      onToggle: () =>
-                          ref.read(habitProvider.notifier).checkIn(type.key),
-                    )),
+                ...habitTypes.map(
+                  (type) => _HabitTile(
+                    type: type,
+                    isDone: state.habits
+                        .where((h) => h.type == type.key)
+                        .any((h) => h.completed),
+                    onToggle: () =>
+                        ref.read(habitProvider.notifier).checkIn(type.key),
+                  ),
+                ),
               ],
             ),
     );
   }
 }
 
-const HABIT_TYPES = [
-  _HabitType('WAKE_UP_EARLY', 'Wake Up Early', Icons.wb_sunny, AppColors.accentYellow),
-  _HabitType('WORKOUT_COMPLETED', 'Workout', Icons.fitness_center, AppColors.primary),
+const habitTypes = [
+  _HabitType(
+    'WAKE_UP_EARLY',
+    'Wake Up Early',
+    Icons.wb_sunny,
+    AppColors.accentYellow,
+  ),
+  _HabitType(
+    'WORKOUT_COMPLETED',
+    'Workout',
+    Icons.fitness_center,
+    AppColors.primary,
+  ),
   _HabitType('DRINK_WATER', 'Hydrate', Icons.water_drop, AppColors.accentBlue),
   _HabitType('EAT_HEALTHY', 'Eat Healthy', Icons.restaurant, AppColors.accent),
-  _HabitType('SLEEP_ON_TIME', 'Sleep On Time', Icons.bedtime, AppColors.accentPurple),
+  _HabitType(
+    'SLEEP_ON_TIME',
+    'Sleep On Time',
+    Icons.bedtime,
+    AppColors.accentPurple,
+  ),
   _HabitType('STRETCH', 'Stretch', Icons.accessibility_new, AppColors.warning),
   _HabitType('MEDITATE', 'Meditate', Icons.self_improvement, Color(0xFFE8A0BF)),
 ];
@@ -71,7 +88,10 @@ class _HabitHeader extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.accentBlue.withOpacity(0.2), AppColors.accentPurple.withOpacity(0.2)],
+          colors: [
+            AppColors.accentBlue.withValues(alpha: 0.2),
+            AppColors.accentPurple.withValues(alpha: 0.2),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -82,7 +102,11 @@ class _HabitHeader extends StatelessWidget {
         children: [
           const Text(
             'Daily Discipline',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -118,14 +142,18 @@ class _HabitTile extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 44, height: 44,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: isDone
-                      ? type.color.withOpacity(0.2)
+                      ? type.color.withValues(alpha: 0.2)
                       : AppColors.surfaceLight,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(type.icon, color: isDone ? type.color : AppColors.textMuted),
+                child: Icon(
+                  type.icon,
+                  color: isDone ? type.color : AppColors.textMuted,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -134,7 +162,9 @@ class _HabitTile extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: isDone ? AppColors.textPrimary : AppColors.textSecondary,
+                    color: isDone
+                        ? AppColors.textPrimary
+                        : AppColors.textSecondary,
                   ),
                 ),
               ),

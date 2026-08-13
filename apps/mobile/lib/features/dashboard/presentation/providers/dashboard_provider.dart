@@ -41,6 +41,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   }
 }
 
-final dashboardProvider = StateNotifierProvider<DashboardNotifier, DashboardState>((ref) {
-  return DashboardNotifier(ref.watch(dashboardRepositoryProvider));
-});
+final dashboardProvider =
+    StateNotifierProvider<DashboardNotifier, DashboardState>((ref) {
+      return DashboardNotifier(ref.watch(dashboardRepositoryProvider));
+    });

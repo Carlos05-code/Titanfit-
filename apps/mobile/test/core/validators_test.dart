@@ -35,7 +35,10 @@ void main() {
     });
 
     test('rejects short passwords', () {
-      expect(Validators.password('abc12'), 'Password must be at least 6 characters');
+      expect(
+        Validators.password('abc12'),
+        'Password must be at least 6 characters',
+      );
     });
   });
 

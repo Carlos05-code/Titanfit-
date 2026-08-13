@@ -63,7 +63,10 @@ class WorkoutNotifier extends StateNotifier<WorkoutState> {
     }
   }
 
-  Future<void> addExerciseToWorkout(String workoutId, Map<String, dynamic> exerciseData) async {
+  Future<void> addExerciseToWorkout(
+    String workoutId,
+    Map<String, dynamic> exerciseData,
+  ) async {
     try {
       await _repository.addExercise(workoutId, exerciseData);
       await loadWorkouts();
@@ -73,6 +76,8 @@ class WorkoutNotifier extends StateNotifier<WorkoutState> {
   }
 }
 
-final workoutProvider = StateNotifierProvider<WorkoutNotifier, WorkoutState>((ref) {
+final workoutProvider = StateNotifierProvider<WorkoutNotifier, WorkoutState>((
+  ref,
+) {
   return WorkoutNotifier(ref.watch(workoutRepositoryProvider));
 });

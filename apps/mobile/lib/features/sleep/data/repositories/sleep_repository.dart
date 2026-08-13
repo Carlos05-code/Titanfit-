@@ -23,9 +23,13 @@ class SleepRepository {
       final sleep = DateTime.parse(sleepTime);
       final wake = DateTime.parse(wakeTime);
       final duration = (wake.difference(sleep).inMinutes / 60).roundToDouble();
-      final score = duration >= 7 && duration <= 9 ? 100.0 :
-                    duration >= 6 ? 75.0 :
-                    duration >= 5 ? 50.0 : 25.0;
+      final score = duration >= 7 && duration <= 9
+          ? 100.0
+          : duration >= 6
+          ? 75.0
+          : duration >= 5
+          ? 50.0
+          : 25.0;
 
       final record = SleepRecord(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -71,15 +75,21 @@ class SleepRepository {
     final json = await _storage.read(key: 'local_sleep');
     if (json == null) return [];
     final list = jsonDecode(json) as List;
-    return list.map((e) => SleepRecord.fromJson(e as Map<String, dynamic>)).toList();
+    return list
+        .map((e) => SleepRecord.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   Future<Map<String, dynamic>> _getHistoryLocal(int days) async {
     final all = await _getAllLocal();
     final cutoff = DateTime.now().subtract(Duration(days: days));
     final filtered = all.where((r) => r.sleepTime.isAfter(cutoff)).toList();
-    final avgScore = filtered.isEmpty ? 0.0 : filtered.fold<double>(0, (s, r) => s + r.score) / filtered.length;
-    final avgDuration = filtered.isEmpty ? 0.0 : filtered.fold<double>(0, (s, r) => s + r.duration) / filtered.length;
+    final avgScore = filtered.isEmpty
+        ? 0.0
+        : filtered.fold<double>(0, (s, r) => s + r.score) / filtered.length;
+    final avgDuration = filtered.isEmpty
+        ? 0.0
+        : filtered.fold<double>(0, (s, r) => s + r.duration) / filtered.length;
     return {
       'records': filtered.map((r) => r.toJson()).toList(),
       'avgScore': avgScore.round(),
@@ -90,8 +100,12 @@ class SleepRepository {
 
   Future<Map<String, dynamic>> _getStatsLocal() async {
     final all = await _getAllLocal();
-    final avgScore = all.isEmpty ? 0.0 : all.fold<double>(0, (s, r) => s + r.score) / all.length;
-    final avgDuration = all.isEmpty ? 0.0 : all.fold<double>(0, (s, r) => s + r.duration) / all.length;
+    final avgScore = all.isEmpty
+        ? 0.0
+        : all.fold<double>(0, (s, r) => s + r.score) / all.length;
+    final avgDuration = all.isEmpty
+        ? 0.0
+        : all.fold<double>(0, (s, r) => s + r.duration) / all.length;
     return {
       'totalRecords': all.length,
       'avgScore': avgScore.round(),

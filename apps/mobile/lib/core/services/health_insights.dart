@@ -45,9 +45,11 @@ class HealthInsights {
     if (records.isEmpty) return null;
 
     final now = DateTime.now();
-    final last7 = records.where((r) =>
-      r.sleepTime.isAfter(now.subtract(const Duration(days: 7)))
-    ).toList();
+    final last7 = records
+        .where(
+          (r) => r.sleepTime.isAfter(now.subtract(const Duration(days: 7))),
+        )
+        .toList();
 
     if (last7.isEmpty) return null;
 
@@ -56,7 +58,10 @@ class HealthInsights {
     final lastNight = last7.isNotEmpty ? last7.first.duration : 0;
     final chronic = shortNights >= 3;
 
-    if (avg >= optimalMin && avg <= optimalMax && !chronic && lastNight >= optimalMin) {
+    if (avg >= optimalMin &&
+        avg <= optimalMax &&
+        !chronic &&
+        lastNight >= optimalMin) {
       return SleepRecommendation(
         title: 'Sleep is on track',
         message: 'Averaging ${avg.toStringAsFixed(1)}h — keep it up!',
@@ -68,10 +73,12 @@ class HealthInsights {
     if (chronic || avg < fairMin || avg > fairMax) {
       final isShort = avg < optimalMin;
       return SleepRecommendation(
-        title: isShort ? '⚠️ Sleep debt accumulating' : '⚠️ Oversleeping detected',
+        title: isShort
+            ? '⚠️ Sleep debt accumulating'
+            : '⚠️ Oversleeping detected',
         message: isShort
             ? 'Only ${avg.toStringAsFixed(1)}h avg over the last 7 days. '
-              'You\'ve had $shortNights short nights. Chronic sleep loss impairs recovery, focus, and immune function.'
+                  'You\'ve had $shortNights short nights. Chronic sleep loss impairs recovery, focus, and immune function.'
             : 'Averaging ${avg.toStringAsFixed(1)}h. Oversleeping can leave you groggy and disrupt your schedule.',
         level: SleepAlertLevel.poor,
         tip: isShort
@@ -83,8 +90,9 @@ class HealthInsights {
     if (lastNight < optimalMin) {
       return SleepRecommendation(
         title: '🌙 Recover tonight',
-        message: 'You got ${lastNight.toStringAsFixed(1)}h last night. '
-          'Aim for at least ${optimalMin}h tonight to stay sharp.',
+        message:
+            'You got ${lastNight.toStringAsFixed(1)}h last night. '
+            'Aim for at least ${optimalMin}h tonight to stay sharp.',
         level: SleepAlertLevel.fair,
         tip: 'Avoid screens 30 min before bed and keep your room cool.',
       );
@@ -104,7 +112,10 @@ class HealthInsights {
     );
   }
 
-  static RestDaySuggestion suggestRestDay(List<WorkoutModel> workouts, {List<SleepRecord>? sleepRecords}) {
+  static RestDaySuggestion suggestRestDay(
+    List<WorkoutModel> workouts, {
+    List<SleepRecord>? sleepRecords,
+  }) {
     if (workouts.isEmpty) {
       return const RestDaySuggestion(
         title: 'Start your journey',
@@ -131,15 +142,16 @@ class HealthInsights {
       }
     }
 
-    final weekCount = sorted.where((w) =>
-      w.date.isAfter(now.subtract(const Duration(days: 7)))
-    ).length;
+    final weekCount = sorted
+        .where((w) => w.date.isAfter(now.subtract(const Duration(days: 7))))
+        .length;
 
     if (consecutive >= maxConsecutiveWorkouts) {
       return RestDaySuggestion(
         title: '🛑 Rest day recommended',
-        message: 'You\'ve worked out $consecutive days straight! '
-          'Your muscles need 24-48h to repair and grow. Take a day off to prevent injury and improve gains.',
+        message:
+            'You\'ve worked out $consecutive days straight! '
+            'Your muscles need 24-48h to repair and grow. Take a day off to prevent injury and improve gains.',
         shouldRest: true,
         consecutiveDays: consecutive,
       );
@@ -148,7 +160,8 @@ class HealthInsights {
     if (weekCount >= 6) {
       return RestDaySuggestion(
         title: '⚡ High training load',
-        message: '$weekCount workouts this week. Consider a rest day to avoid overtraining syndrome.',
+        message:
+            '$weekCount workouts this week. Consider a rest day to avoid overtraining syndrome.',
         shouldRest: true,
         consecutiveDays: consecutive,
       );
@@ -157,7 +170,8 @@ class HealthInsights {
     if (weekCount >= 5) {
       return RestDaySuggestion(
         title: '💪 Great consistency',
-        message: '$weekCount workouts this week. You\'re on track for excellent results.',
+        message:
+            '$weekCount workouts this week. You\'re on track for excellent results.',
         shouldRest: false,
         consecutiveDays: consecutive,
       );
@@ -184,6 +198,9 @@ final healthInsightsProvider = Provider<HealthInsightsState>((ref) {
   final workoutState = ref.watch(workoutProvider);
   return HealthInsightsState(
     sleepRec: HealthInsights.analyzeSleep(sleepState.records),
-    restSug: HealthInsights.suggestRestDay(workoutState.workouts, sleepRecords: sleepState.records),
+    restSug: HealthInsights.suggestRestDay(
+      workoutState.workouts,
+      sleepRecords: sleepState.records,
+    ),
   );
 });

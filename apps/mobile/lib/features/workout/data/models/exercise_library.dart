@@ -15,11 +15,23 @@ enum IconType { chest, back, legs, shoulders, arms, core, cardio, full }
 const exerciseLibrary = [
   // Chest
   Exercise(name: 'Bench Press', muscleGroup: 'Chest', icon: IconType.chest),
-  Exercise(name: 'Incline Bench Press', muscleGroup: 'Chest', icon: IconType.chest),
-  Exercise(name: 'Decline Bench Press', muscleGroup: 'Chest', icon: IconType.chest),
+  Exercise(
+    name: 'Incline Bench Press',
+    muscleGroup: 'Chest',
+    icon: IconType.chest,
+  ),
+  Exercise(
+    name: 'Decline Bench Press',
+    muscleGroup: 'Chest',
+    icon: IconType.chest,
+  ),
   Exercise(name: 'Dumbbell Flyes', muscleGroup: 'Chest', icon: IconType.chest),
   Exercise(name: 'Push-ups', muscleGroup: 'Chest', icon: IconType.chest),
-  Exercise(name: 'Cable Crossovers', muscleGroup: 'Chest', icon: IconType.chest),
+  Exercise(
+    name: 'Cable Crossovers',
+    muscleGroup: 'Chest',
+    icon: IconType.chest,
+  ),
   Exercise(name: 'Dips', muscleGroup: 'Chest', icon: IconType.chest),
   // Back
   Exercise(name: 'Deadlift', muscleGroup: 'Back', icon: IconType.back),
@@ -38,11 +50,31 @@ const exerciseLibrary = [
   Exercise(name: 'Calf Raises', muscleGroup: 'Legs', icon: IconType.legs),
   Exercise(name: 'Lunges', muscleGroup: 'Legs', icon: IconType.legs),
   // Shoulders
-  Exercise(name: 'Overhead Press', muscleGroup: 'Shoulders', icon: IconType.shoulders),
-  Exercise(name: 'Lateral Raise', muscleGroup: 'Shoulders', icon: IconType.shoulders),
-  Exercise(name: 'Front Raise', muscleGroup: 'Shoulders', icon: IconType.shoulders),
-  Exercise(name: 'Rear Delt Fly', muscleGroup: 'Shoulders', icon: IconType.shoulders),
-  Exercise(name: 'Arnold Press', muscleGroup: 'Shoulders', icon: IconType.shoulders),
+  Exercise(
+    name: 'Overhead Press',
+    muscleGroup: 'Shoulders',
+    icon: IconType.shoulders,
+  ),
+  Exercise(
+    name: 'Lateral Raise',
+    muscleGroup: 'Shoulders',
+    icon: IconType.shoulders,
+  ),
+  Exercise(
+    name: 'Front Raise',
+    muscleGroup: 'Shoulders',
+    icon: IconType.shoulders,
+  ),
+  Exercise(
+    name: 'Rear Delt Fly',
+    muscleGroup: 'Shoulders',
+    icon: IconType.shoulders,
+  ),
+  Exercise(
+    name: 'Arnold Press',
+    muscleGroup: 'Shoulders',
+    icon: IconType.shoulders,
+  ),
   Exercise(name: 'Shrugs', muscleGroup: 'Shoulders', icon: IconType.shoulders),
   // Arms
   Exercise(name: 'Barbell Curl', muscleGroup: 'Arms', icon: IconType.arms),
@@ -63,5 +95,9 @@ const exerciseLibrary = [
   Exercise(name: 'Cycling', muscleGroup: 'Cardio', icon: IconType.cardio),
   Exercise(name: 'Jump Rope', muscleGroup: 'Cardio', icon: IconType.cardio),
   Exercise(name: 'Burpees', muscleGroup: 'Cardio', icon: IconType.cardio),
-  Exercise(name: 'Rowing Machine', muscleGroup: 'Cardio', icon: IconType.cardio),
+  Exercise(
+    name: 'Rowing Machine',
+    muscleGroup: 'Cardio',
+    icon: IconType.cardio,
+  ),
 ];

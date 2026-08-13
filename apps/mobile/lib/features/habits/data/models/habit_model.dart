@@ -29,14 +29,22 @@ class HabitModel {
 
   String get displayName {
     switch (type) {
-      case 'WAKE_UP_EARLY': return 'Wake Up Early';
-      case 'WORKOUT_COMPLETED': return 'Workout';
-      case 'DRINK_WATER': return 'Hydrate';
-      case 'EAT_HEALTHY': return 'Eat Healthy';
-      case 'SLEEP_ON_TIME': return 'Sleep On Time';
-      case 'STRETCH': return 'Stretch';
-      case 'MEDITATE': return 'Meditate';
-      default: return type;
+      case 'WAKE_UP_EARLY':
+        return 'Wake Up Early';
+      case 'WORKOUT_COMPLETED':
+        return 'Workout';
+      case 'DRINK_WATER':
+        return 'Hydrate';
+      case 'EAT_HEALTHY':
+        return 'Eat Healthy';
+      case 'SLEEP_ON_TIME':
+        return 'Sleep On Time';
+      case 'STRETCH':
+        return 'Stretch';
+      case 'MEDITATE':
+        return 'Meditate';
+      default:
+        return type;
     }
   }
 }

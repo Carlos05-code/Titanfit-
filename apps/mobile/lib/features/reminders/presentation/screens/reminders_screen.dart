@@ -6,7 +6,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/models/reminder.dart';
 
-final remindersProvider = StateNotifierProvider<RemindersNotifier, List<Reminder>>((ref) => RemindersNotifier());
+final remindersProvider =
+    StateNotifierProvider<RemindersNotifier, List<Reminder>>(
+      (ref) => RemindersNotifier(),
+    );
 
 class RemindersNotifier extends StateNotifier<List<Reminder>> {
   final _storage = const FlutterSecureStorage();
@@ -20,22 +23,45 @@ class RemindersNotifier extends StateNotifier<List<Reminder>> {
     try {
       final raw = await _storage.read(key: _key);
       if (raw != null) {
-        final list = (jsonDecode(raw) as List).map((e) => Reminder.fromJson(e as Map<String, dynamic>)).toList();
+        final list = (jsonDecode(raw) as List)
+            .map((e) => Reminder.fromJson(e as Map<String, dynamic>))
+            .toList();
         state = list;
       } else {
-        state = defaultReminders.map((r) => Reminder(
-          id: r.id, title: r.title, subtitle: r.subtitle, icon: r.icon, time: r.time, days: List.from(r.days),
-        )).toList();
+        state = defaultReminders
+            .map(
+              (r) => Reminder(
+                id: r.id,
+                title: r.title,
+                subtitle: r.subtitle,
+                icon: r.icon,
+                time: r.time,
+                days: List.from(r.days),
+              ),
+            )
+            .toList();
       }
     } catch (_) {
-      state = defaultReminders.map((r) => Reminder(
-        id: r.id, title: r.title, subtitle: r.subtitle, icon: r.icon, time: r.time, days: List.from(r.days),
-      )).toList();
+      state = defaultReminders
+          .map(
+            (r) => Reminder(
+              id: r.id,
+              title: r.title,
+              subtitle: r.subtitle,
+              icon: r.icon,
+              time: r.time,
+              days: List.from(r.days),
+            ),
+          )
+          .toList();
     }
   }
 
   Future<void> _persist() async {
-    await _storage.write(key: _key, value: jsonEncode(state.map((e) => e.toJson()).toList()));
+    await _storage.write(
+      key: _key,
+      value: jsonEncode(state.map((e) => e.toJson()).toList()),
+    );
   }
 
   void toggleEnabled(String id) {
@@ -97,49 +123,72 @@ class _ReminderTile extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: reminder.enabled ? AppColors.cardBackground : AppColors.divider.withValues(alpha: 0.2),
+        color: reminder.enabled
+            ? AppColors.cardBackground
+            : AppColors.divider.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: reminder.enabled ? AppColors.primary.withValues(alpha: 0.2) : AppColors.divider,
+          color: reminder.enabled
+              ? AppColors.primary.withValues(alpha: 0.2)
+              : AppColors.divider,
         ),
       ),
       child: Row(
         children: [
           Container(
-            width: 48, height: 48,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
-              color: (reminder.enabled ? AppColors.primary : AppColors.textMuted).withValues(alpha: 0.1),
+              color:
+                  (reminder.enabled ? AppColors.primary : AppColors.textMuted)
+                      .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(reminder.icon, color: reminder.enabled ? AppColors.primary : AppColors.textMuted),
+            child: Icon(
+              reminder.icon,
+              color: reminder.enabled ? AppColors.primary : AppColors.textMuted,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(reminder.title,
+                Text(
+                  reminder.title,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: reminder.enabled ? AppColors.textPrimary : AppColors.textMuted,
+                    color: reminder.enabled
+                        ? AppColors.textPrimary
+                        : AppColors.textMuted,
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(reminder.subtitle,
-                  style: TextStyle(color: reminder.enabled ? AppColors.textSecondary : AppColors.textMuted, fontSize: 13),
+                Text(
+                  reminder.subtitle,
+                  style: TextStyle(
+                    color: reminder.enabled
+                        ? AppColors.textSecondary
+                        : AppColors.textMuted,
+                    fontSize: 13,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${reminder.time.format(context)} · ${_daysLabel(reminder.days)}',
-                  style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
+                  style: const TextStyle(
+                    color: AppColors.textMuted,
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
           ),
           Switch(
             value: reminder.enabled,
-            onChanged: (_) => ref.read(remindersProvider.notifier).toggleEnabled(reminder.id),
+            onChanged: (_) =>
+                ref.read(remindersProvider.notifier).toggleEnabled(reminder.id),
             activeThumbColor: AppColors.primary,
           ),
         ],

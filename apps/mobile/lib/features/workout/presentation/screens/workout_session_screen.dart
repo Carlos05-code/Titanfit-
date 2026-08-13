@@ -10,7 +10,8 @@ class WorkoutSessionScreen extends ConsumerStatefulWidget {
   const WorkoutSessionScreen({super.key});
 
   @override
-  ConsumerState<WorkoutSessionScreen> createState() => _WorkoutSessionScreenState();
+  ConsumerState<WorkoutSessionScreen> createState() =>
+      _WorkoutSessionScreenState();
 }
 
 class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
@@ -61,12 +62,14 @@ class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
           if (session.status == SessionStatus.active)
             IconButton(
               icon: const Icon(Icons.pause),
-              onPressed: () => ref.read(workoutSessionProvider.notifier).pauseSession(),
+              onPressed: () =>
+                  ref.read(workoutSessionProvider.notifier).pauseSession(),
             )
           else if (session.status == SessionStatus.paused)
             IconButton(
               icon: const Icon(Icons.play_arrow),
-              onPressed: () => ref.read(workoutSessionProvider.notifier).resumeSession(),
+              onPressed: () =>
+                  ref.read(workoutSessionProvider.notifier).resumeSession(),
             ),
         ],
       ),
@@ -74,18 +77,34 @@ class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
         children: [
           _TimerBar(elapsedStr: elapsedStr, status: session.status),
           if (session.status == SessionStatus.paused)
-            Expanded(child: _PausedOverlay(onResume: () {
-              ref.read(workoutSessionProvider.notifier).resumeSession();
-            }))
+            Expanded(
+              child: _PausedOverlay(
+                onResume: () {
+                  ref.read(workoutSessionProvider.notifier).resumeSession();
+                },
+              ),
+            )
           else if (session.status == SessionStatus.completed)
-            Expanded(child: _CompletedOverlay(onFinish: () {
-              context.pop();
-            }))
+            Expanded(
+              child: _CompletedOverlay(
+                onFinish: () {
+                  context.pop();
+                },
+              ),
+            )
           else
             Expanded(
               child: ex == null
-                ? const Center(child: Text('All done!', style: TextStyle(color: AppColors.textSecondary, fontSize: 24)))
-                : _buildActiveSession(session, ex),
+                  ? const Center(
+                      child: Text(
+                        'All done!',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 24,
+                        ),
+                      ),
+                    )
+                  : _buildActiveSession(session, ex),
             ),
         ],
       ),
@@ -106,7 +125,8 @@ class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
           if (session.isResting) ...[
             _RestTimer(
               seconds: session.restSecondsRemaining,
-              onSkip: () => ref.read(workoutSessionProvider.notifier).skipRest(),
+              onSkip: () =>
+                  ref.read(workoutSessionProvider.notifier).skipRest(),
             ),
             const SizedBox(height: 16),
           ],
@@ -129,8 +149,10 @@ class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
                 children: [
                   Icon(Icons.check_circle, color: AppColors.primary, size: 18),
                   SizedBox(width: 8),
-                  Text('All sets completed! Move to next exercise',
-                    style: TextStyle(color: AppColors.primary, fontSize: 13)),
+                  Text(
+                    'All sets completed! Move to next exercise',
+                    style: TextStyle(color: AppColors.primary, fontSize: 13),
+                  ),
                 ],
               ),
             ),
@@ -143,7 +165,11 @@ class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
                 child: TextField(
                   controller: _weightCtrl,
                   keyboardType: TextInputType.number,
-                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Weight (kg)',
                     labelStyle: const TextStyle(color: AppColors.textMuted),
@@ -166,12 +192,17 @@ class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
                     icon: const Icon(Icons.fitness_center, size: 22),
                     label: Text(
                       'Log Set ${ex.completedSetCount + 1}',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: AppColors.background,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),
@@ -182,47 +213,87 @@ class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
           if (ex.completedSets.isNotEmpty) ...[
             const Align(
               alignment: Alignment.centerLeft,
-              child: Text('Completed Sets', style: TextStyle(color: AppColors.textSecondary, fontSize: 14, fontWeight: FontWeight.w600)),
+              child: Text(
+                'Completed Sets',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             const SizedBox(height: 8),
-            ...ex.completedSets.map((s) => Container(
-              margin: const EdgeInsets.only(bottom: 6),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 32, height: 32,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
+            ...ex.completedSets.map(
+              (s) => Container(
+                margin: const EdgeInsets.only(bottom: 6),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.cardBackground,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${s.setNumber}',
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                    child: Center(child: Text('${s.setNumber}', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold))),
-                  ),
-                  const SizedBox(width: 12),
-                  Text('${s.reps} reps', style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w500)),
-                  if (s.weight > 0) ...[
-                    const SizedBox(width: 8),
-                    Text('@ ${s.weight}kg', style: const TextStyle(color: AppColors.textMuted)),
+                    const SizedBox(width: 12),
+                    Text(
+                      '${s.reps} reps',
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    if (s.weight > 0) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        '@ ${s.weight}kg',
+                        style: const TextStyle(color: AppColors.textMuted),
+                      ),
+                    ],
+                    const Spacer(),
+                    Text(
+                      formatTimeOfDay(s.timestamp),
+                      style: const TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
-                  const Spacer(),
-                  Text(formatTimeOfDay(s.timestamp), style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
-                ],
+                ),
               ),
-            )),
+            ),
           ],
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () {
-                if (session.currentExerciseIndex < session.exercises.length - 1) {
+                if (session.currentExerciseIndex <
+                    session.exercises.length - 1) {
                   ref.read(workoutSessionProvider.notifier).nextExercise();
-                  _repsCtrl.text = session.exercises[session.currentExerciseIndex + 1].targetReps.toString();
-                  _weightCtrl.text = session.exercises[session.currentExerciseIndex + 1].targetWeight.toString();
+                  _repsCtrl.text = session
+                      .exercises[session.currentExerciseIndex + 1]
+                      .targetReps
+                      .toString();
+                  _weightCtrl.text = session
+                      .exercises[session.currentExerciseIndex + 1]
+                      .targetWeight
+                      .toString();
                 }
               },
               icon: const Icon(Icons.skip_next),
@@ -233,7 +304,9 @@ class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
               ),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
@@ -245,7 +318,9 @@ class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
   void _logSet() {
     final reps = int.tryParse(_repsCtrl.text) ?? 10;
     final weight = double.tryParse(_weightCtrl.text) ?? 0;
-    ref.read(workoutSessionProvider.notifier).logSet(reps: reps, weight: weight);
+    ref
+        .read(workoutSessionProvider.notifier)
+        .logSet(reps: reps, weight: weight);
     _pulseAnim.forward().then((_) => _pulseAnim.reverse());
   }
 
@@ -257,10 +332,15 @@ class _WorkoutSessionScreenState extends ConsumerState<WorkoutSessionScreen>
         title: const Text('End Workout?'),
         content: const Text('Progress will be saved.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () {
-              final data = ref.read(workoutSessionProvider.notifier).endSession();
+              final data = ref
+                  .read(workoutSessionProvider.notifier)
+                  .endSession();
               ref.read(workoutProvider.notifier).createWorkout(data);
               Navigator.pop(ctx);
               context.pop();
@@ -299,11 +379,22 @@ class _TimerBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            status == SessionStatus.paused ? Icons.pause_circle_filled : Icons.timer,
-            color: AppColors.primary, size: 20,
+            status == SessionStatus.paused
+                ? Icons.pause_circle_filled
+                : Icons.timer,
+            color: AppColors.primary,
+            size: 20,
           ),
           const SizedBox(width: 8),
-          Text(elapsedStr, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: AppColors.textPrimary, letterSpacing: 2)),
+          Text(
+            elapsedStr,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w900,
+              color: AppColors.textPrimary,
+              letterSpacing: 2,
+            ),
+          ),
         ],
       ),
     );
@@ -312,7 +403,11 @@ class _TimerBar extends StatelessWidget {
 
 class _ProgressDots extends StatelessWidget {
   final int total, current, completed;
-  const _ProgressDots({required this.total, required this.current, required this.completed});
+  const _ProgressDots({
+    required this.total,
+    required this.current,
+    required this.completed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -320,8 +415,11 @@ class _ProgressDots extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(total, (i) {
         Color color = AppColors.divider;
-        if (i < completed) { color = AppColors.primary; }
-        else if (i == current) { color = AppColors.accent; }
+        if (i < completed) {
+          color = AppColors.primary;
+        } else if (i == current) {
+          color = AppColors.accent;
+        }
         return Container(
           width: i == current ? 28 : 10,
           height: 10,
@@ -356,8 +454,23 @@ class _RestTimer extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('REST', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.accent, letterSpacing: 2)),
-              Text('${seconds}s', style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
+              const Text(
+                'REST',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.accent,
+                  letterSpacing: 2,
+                ),
+              ),
+              Text(
+                '${seconds}s',
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.textPrimary,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -373,7 +486,10 @@ class _RestTimer extends StatelessWidget {
           const SizedBox(height: 8),
           GestureDetector(
             onTap: onSkip,
-            child: const Text('Skip →', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+            child: const Text(
+              'Skip →',
+              style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -384,7 +500,12 @@ class _RestTimer extends StatelessWidget {
 class _ExerciseCard extends StatelessWidget {
   final String name;
   final int setCurrent, setTarget, repsTarget;
-  const _ExerciseCard({required this.name, required this.setCurrent, required this.setTarget, required this.repsTarget});
+  const _ExerciseCard({
+    required this.name,
+    required this.setCurrent,
+    required this.setTarget,
+    required this.repsTarget,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -404,9 +525,23 @@ class _ExerciseCard extends StatelessWidget {
         children: [
           const Icon(Icons.fitness_center, color: AppColors.primary, size: 32),
           const SizedBox(height: 12),
-          Text(name, textAlign: TextAlign.center, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          Text(
+            name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text('Set $setCurrent of $setTarget · $repsTarget reps', style: const TextStyle(color: AppColors.textSecondary, fontSize: 15)),
+          Text(
+            'Set $setCurrent of $setTarget · $repsTarget reps',
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 15,
+            ),
+          ),
         ],
       ),
     );
@@ -421,31 +556,54 @@ class _QuickRepSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Text('Reps: ', style: TextStyle(color: AppColors.textSecondary, fontSize: 16, fontWeight: FontWeight.w600)),
+        const Text(
+          'Reps: ',
+          style: TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         const SizedBox(width: 8),
-        ...['6', '8', '10', '12', '15'].map((r) => Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: GestureDetector(
-            onTap: () {
-              controller.text = r;
-              controller.selection = TextSelection.fromPosition(TextPosition(offset: r.length));
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: controller.text == r ? AppColors.primary.withValues(alpha: 0.2) : AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: controller.text == r ? AppColors.primary : AppColors.divider,
+        ...['6', '8', '10', '12', '15'].map(
+          (r) => Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: GestureDetector(
+              onTap: () {
+                controller.text = r;
+                controller.selection = TextSelection.fromPosition(
+                  TextPosition(offset: r.length),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: controller.text == r
+                      ? AppColors.primary.withValues(alpha: 0.2)
+                      : AppColors.cardBackground,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: controller.text == r
+                        ? AppColors.primary
+                        : AppColors.divider,
+                  ),
+                ),
+                child: Text(
+                  r,
+                  style: TextStyle(
+                    color: controller.text == r
+                        ? AppColors.primary
+                        : AppColors.textSecondary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              child: Text(r, style: TextStyle(
-                color: controller.text == r ? AppColors.primary : AppColors.textSecondary,
-                fontWeight: FontWeight.bold,
-              )),
             ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -461,19 +619,36 @@ class _PausedOverlay extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.pause_circle_outline, size: 72, color: AppColors.accent),
+          const Icon(
+            Icons.pause_circle_outline,
+            size: 72,
+            color: AppColors.accent,
+          ),
           const SizedBox(height: 16),
-          const Text('PAUSED', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: AppColors.textPrimary, letterSpacing: 4)),
+          const Text(
+            'PAUSED',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w900,
+              color: AppColors.textPrimary,
+              letterSpacing: 4,
+            ),
+          ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: onResume,
             icon: const Icon(Icons.play_arrow, size: 28),
-            label: const Text('RESUME', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            label: const Text(
+              'RESUME',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.background,
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           ),
         ],
@@ -498,22 +673,42 @@ class _CompletedOverlay extends StatelessWidget {
               color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.emoji_events, size: 72, color: AppColors.accentYellow),
+            child: const Icon(
+              Icons.emoji_events,
+              size: 72,
+              color: AppColors.accentYellow,
+            ),
           ),
           const SizedBox(height: 20),
-          const Text('WORKOUT COMPLETE!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: AppColors.textPrimary, letterSpacing: 2)),
+          const Text(
+            'WORKOUT COMPLETE!',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+              color: AppColors.textPrimary,
+              letterSpacing: 2,
+            ),
+          ),
           const SizedBox(height: 8),
-          const Text('Great job, Titan', style: TextStyle(fontSize: 16, color: AppColors.textSecondary)),
+          const Text(
+            'Great job, Titan',
+            style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
+          ),
           const SizedBox(height: 32),
           ElevatedButton.icon(
             onPressed: onFinish,
             icon: const Icon(Icons.check, size: 24),
-            label: const Text('DONE', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            label: const Text(
+              'DONE',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.background,
               padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           ),
         ],

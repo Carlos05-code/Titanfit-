@@ -41,6 +41,8 @@ class ProgressNotifier extends StateNotifier<ProgressState> {
   }
 }
 
-final progressProvider = StateNotifierProvider<ProgressNotifier, ProgressState>((ref) {
-  return ProgressNotifier(ref.watch(progressRepositoryProvider));
-});
+final progressProvider = StateNotifierProvider<ProgressNotifier, ProgressState>(
+  (ref) {
+    return ProgressNotifier(ref.watch(progressRepositoryProvider));
+  },
+);

@@ -36,7 +36,7 @@ class Reminder {
     subtitle: json['subtitle'],
     icon: IconData(json['iconCodePoint'], fontFamily: 'MaterialIcons'),
     time: TimeOfDay(hour: json['hour'] ?? 7, minute: json['minute'] ?? 0),
-    days: List<int>.from(json['days'] ?? [0,1,2,3,4,5,6]),
+    days: List<int>.from(json['days'] ?? [0, 1, 2, 3, 4, 5, 6]),
     enabled: json['enabled'] ?? true,
   );
 }
@@ -48,7 +48,7 @@ final defaultReminders = [
     subtitle: 'Rise and shine, Titan',
     icon: const IconData(0xe4d8, fontFamily: 'MaterialIcons'),
     time: const TimeOfDay(hour: 6, minute: 0),
-    days: [0,1,2,3,4,5,6],
+    days: [0, 1, 2, 3, 4, 5, 6],
   ),
   Reminder(
     id: 'workout',
@@ -56,7 +56,7 @@ final defaultReminders = [
     subtitle: 'Time to crush your workout',
     icon: const IconData(0xe4c5, fontFamily: 'MaterialIcons'),
     time: const TimeOfDay(hour: 7, minute: 30),
-    days: [0,1,2,3,4,5],
+    days: [0, 1, 2, 3, 4, 5],
   ),
   Reminder(
     id: 'stretch',
@@ -64,7 +64,7 @@ final defaultReminders = [
     subtitle: 'Stand up and stretch',
     icon: const IconData(0xe409, fontFamily: 'MaterialIcons'),
     time: const TimeOfDay(hour: 12, minute: 0),
-    days: [0,1,2,3,4,5,6],
+    days: [0, 1, 2, 3, 4, 5, 6],
   ),
   Reminder(
     id: 'sleep',
@@ -72,6 +72,6 @@ final defaultReminders = [
     subtitle: 'Prepare for bed',
     icon: const IconData(0xe192, fontFamily: 'MaterialIcons'),
     time: const TimeOfDay(hour: 21, minute: 30),
-    days: [0,1,2,3,4,5,6],
+    days: [0, 1, 2, 3, 4, 5, 6],
   ),
 ];

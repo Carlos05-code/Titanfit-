@@ -31,11 +31,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authProvider.notifier).register(
-        _emailController.text.trim(),
-        _passwordController.text,
-        _nameController.text.trim(),
-      );
+      ref
+          .read(authProvider.notifier)
+          .register(
+            _emailController.text.trim(),
+            _passwordController.text,
+            _nameController.text.trim(),
+          );
     }
   }
 
@@ -115,7 +117,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             ? Icons.visibility_off
                             : Icons.visibility,
                       ),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
                   obscureText: _obscurePassword,
@@ -148,10 +151,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 SizedBox(
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: authState.status == AuthStatus.loading ? null : _submit,
+                    onPressed: authState.status == AuthStatus.loading
+                        ? null
+                        : _submit,
                     child: authState.status == AuthStatus.loading
                         ? const SizedBox(
-                            width: 24, height: 24,
+                            width: 24,
+                            height: 24,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Text('CREATE ACCOUNT'),

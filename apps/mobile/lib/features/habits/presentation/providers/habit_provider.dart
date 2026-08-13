@@ -12,7 +12,11 @@ class HabitState {
   final bool isLoading;
   final String? error;
 
-  const HabitState({this.habits = const [], this.isLoading = false, this.error});
+  const HabitState({
+    this.habits = const [],
+    this.isLoading = false,
+    this.error,
+  });
 
   HabitState copyWith({
     List<HabitModel>? habits,

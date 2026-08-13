@@ -61,10 +61,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildWorkoutsList(state),
-          _buildExerciseLibrary(),
-        ],
+        children: [_buildWorkoutsList(state), _buildExerciseLibrary()],
       ),
     );
   }
@@ -82,10 +79,17 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             const SizedBox(height: 16),
             const Text(
               'No workouts yet',
-              style: TextStyle(fontSize: 18, color: AppColors.textSecondary, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
-            const Text('Start your first workout today', style: TextStyle(color: AppColors.textMuted)),
+            const Text(
+              'Start your first workout today',
+              style: TextStyle(color: AppColors.textMuted),
+            ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () => _showCreateDialog(context),
@@ -116,7 +120,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           color: AppColors.error,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.delete_outline, color: AppColors.background, size: 28),
+        child: const Icon(
+          Icons.delete_outline,
+          color: AppColors.background,
+          size: 28,
+        ),
       ),
       confirmDismiss: (_) async {
         final confirmed = await showDialog<bool>(
@@ -126,10 +134,15 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             title: const Text('Delete Workout'),
             content: const Text('Are you sure?'),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancel'),
+              ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.error,
+                ),
                 child: const Text('DELETE'),
               ),
             ],
@@ -137,7 +150,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         );
         return confirmed ?? false;
       },
-      onDismissed: (_) => ref.read(workoutProvider.notifier).deleteWorkout(workout.id),
+      onDismissed: (_) =>
+          ref.read(workoutProvider.notifier).deleteWorkout(workout.id),
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),
         child: InkWell(
@@ -148,39 +162,72 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             child: Row(
               children: [
                 Container(
-                  width: 48, height: 48,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.fitness_center, color: AppColors.primary),
+                  child: const Icon(
+                    Icons.fitness_center,
+                    color: AppColors.primary,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(workout.title,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                      Text(
+                        workout.title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
                           if (workout.duration != null) ...[
-                            Icon(Icons.timer, size: 14, color: AppColors.textMuted),
+                            Icon(
+                              Icons.timer,
+                              size: 14,
+                              color: AppColors.textMuted,
+                            ),
                             const SizedBox(width: 4),
-                            Text(formatDuration(workout.duration),
-                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                            Text(
+                              formatDuration(workout.duration),
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 12,
+                              ),
+                            ),
                             const SizedBox(width: 16),
                           ],
                           if (workout.calories != null) ...[
-                            Icon(Icons.local_fire_department, size: 14, color: AppColors.accent),
+                            Icon(
+                              Icons.local_fire_department,
+                              size: 14,
+                              color: AppColors.accent,
+                            ),
                             const SizedBox(width: 4),
-                            Text('${workout.calories} cal',
-                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                            Text(
+                              '${workout.calories} cal',
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 12,
+                              ),
+                            ),
                           ],
                           const SizedBox(width: 16),
-                          Text('${workout.exercises.length} exercises',
-                            style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                          Text(
+                            '${workout.exercises.length} exercises',
+                            style: const TextStyle(
+                              color: AppColors.textMuted,
+                              fontSize: 12,
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -188,10 +235,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 ),
                 GestureDetector(
                   onTap: () {
-                    ref.read(workoutSessionProvider.notifier).startSession(
-                      workout.title,
-                      workout.exercises,
-                    );
+                    ref
+                        .read(workoutSessionProvider.notifier)
+                        .startSession(workout.title, workout.exercises);
                     context.go('/workouts/session');
                   },
                   child: Container(
@@ -200,7 +246,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(Icons.play_arrow, size: 18, color: AppColors.primary),
+                    child: const Icon(
+                      Icons.play_arrow,
+                      size: 18,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -212,7 +262,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       color: AppColors.error.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(Icons.delete_outline, size: 18, color: AppColors.error),
+                    child: const Icon(
+                      Icons.delete_outline,
+                      size: 18,
+                      color: AppColors.error,
+                    ),
                   ),
                 ),
               ],
@@ -231,7 +285,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         title: const Text('Delete Workout'),
         content: const Text('Are you sure? This cannot be undone.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () {
               ref.read(workoutProvider.notifier).deleteWorkout(id);
@@ -248,13 +305,17 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   Widget _buildExerciseLibrary() {
     final muscleGroups = <String>[exerciseLibrary.first.muscleGroup];
     for (final e in exerciseLibrary) {
-      if (!muscleGroups.contains(e.muscleGroup)) muscleGroups.add(e.muscleGroup);
+      if (!muscleGroups.contains(e.muscleGroup)) {
+        muscleGroups.add(e.muscleGroup);
+      }
     }
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: muscleGroups.map((group) {
-        final exercises = exerciseLibrary.where((e) => e.muscleGroup == group).toList();
+        final exercises = exerciseLibrary
+            .where((e) => e.muscleGroup == group)
+            .toList();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -263,7 +324,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               child: Row(
                 children: [
                   Container(
-                    width: 3, height: 16,
+                    width: 3,
+                    height: 16,
                     decoration: BoxDecoration(
                       color: _colorForGroup(group),
                       borderRadius: BorderRadius.circular(2),
@@ -281,34 +343,52 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 ],
               ),
             ),
-            ...exercises.map((ex) => GestureDetector(
-              onTap: () => _addFromLibrary(context, ex),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                margin: const EdgeInsets.only(bottom: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(_iconForType(ex.icon), size: 18, color: _colorForGroup(group)),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(ex.name, style: const TextStyle(color: AppColors.textSecondary)),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(6),
+            ...exercises.map(
+              (ex) => GestureDetector(
+                onTap: () => _addFromLibrary(context, ex),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  margin: const EdgeInsets.only(bottom: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBackground,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _iconForType(ex.icon),
+                        size: 18,
+                        color: _colorForGroup(group),
                       ),
-                      child: const Icon(Icons.add, size: 16, color: AppColors.primary),
-                    ),
-                  ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          ex.name,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(
+                          Icons.add,
+                          size: 16,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            )),
+            ),
             const SizedBox(height: 8),
           ],
         );
@@ -318,27 +398,43 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
   Color _colorForGroup(String group) {
     switch (group) {
-      case 'Chest': return AppColors.primary;
-      case 'Back': return AppColors.accentBlue;
-      case 'Legs': return AppColors.accent;
-      case 'Shoulders': return AppColors.accentPurple;
-      case 'Arms': return AppColors.accentYellow;
-      case 'Core': return const Color(0xFFE8A0BF);
-      case 'Cardio': return Colors.redAccent;
-      default: return AppColors.primary;
+      case 'Chest':
+        return AppColors.primary;
+      case 'Back':
+        return AppColors.accentBlue;
+      case 'Legs':
+        return AppColors.accent;
+      case 'Shoulders':
+        return AppColors.accentPurple;
+      case 'Arms':
+        return AppColors.accentYellow;
+      case 'Core':
+        return const Color(0xFFE8A0BF);
+      case 'Cardio':
+        return Colors.redAccent;
+      default:
+        return AppColors.primary;
     }
   }
 
   IconData _iconForType(IconType type) {
     switch (type) {
-      case IconType.chest: return Icons.fitness_center;
-      case IconType.back: return Icons.fitness_center;
-      case IconType.legs: return Icons.directions_walk;
-      case IconType.shoulders: return Icons.accessibility_new;
-      case IconType.arms: return Icons.fitness_center;
-      case IconType.core: return Icons.fitness_center;
-      case IconType.cardio: return Icons.directions_run;
-      case IconType.full: return Icons.fitness_center;
+      case IconType.chest:
+        return Icons.fitness_center;
+      case IconType.back:
+        return Icons.fitness_center;
+      case IconType.legs:
+        return Icons.directions_walk;
+      case IconType.shoulders:
+        return Icons.accessibility_new;
+      case IconType.arms:
+        return Icons.fitness_center;
+      case IconType.core:
+        return Icons.fitness_center;
+      case IconType.cardio:
+        return Icons.directions_run;
+      case IconType.full:
+        return Icons.fitness_center;
     }
   }
 
@@ -363,15 +459,32 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.fitness_center, color: AppColors.primary, size: 24),
+                  child: Icon(
+                    Icons.fitness_center,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(exercise.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-                      Text(exercise.muscleGroup, style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
+                      Text(
+                        exercise.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        exercise.muscleGroup,
+                        style: const TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 13,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -426,11 +539,17 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               ),
             ),
             const SizedBox(height: 8),
-            Text('Includes: ${exercise.name}', style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
+            Text(
+              'Includes: ${exercise.name}',
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 13),
+            ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () {
               if (titleCtrl.text.isNotEmpty) {
@@ -468,23 +587,50 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Add to workout', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+            const Text(
+              'Add to workout',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
             const SizedBox(height: 4),
-            Text('"${exercise.name}" will be added with 3×10 default sets', style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
+            Text(
+              '"${exercise.name}" will be added with 3×10 default sets',
+              style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+            ),
             const SizedBox(height: 16),
             ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.4,
+              ),
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: workouts.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 4),
                 itemBuilder: (_, i) => ListTile(
                   dense: true,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   tileColor: AppColors.cardBackground,
-                  title: Text(workouts[i].title, style: const TextStyle(color: AppColors.textPrimary)),
-                  subtitle: Text('${workouts[i].exercises.length} exercises', style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
-                  trailing: const Icon(Icons.add_circle_outline, color: AppColors.primary, size: 20),
+                  title: Text(
+                    workouts[i].title,
+                    style: const TextStyle(color: AppColors.textPrimary),
+                  ),
+                  subtitle: Text(
+                    '${workouts[i].exercises.length} exercises',
+                    style: const TextStyle(
+                      color: AppColors.textMuted,
+                      fontSize: 12,
+                    ),
+                  ),
+                  trailing: const Icon(
+                    Icons.add_circle_outline,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
                   onTap: () {
                     ref.read(workoutProvider.notifier).addExerciseToWorkout(
                       workouts[i].id,

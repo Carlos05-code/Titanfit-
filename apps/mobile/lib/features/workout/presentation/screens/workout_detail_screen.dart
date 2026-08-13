@@ -44,47 +44,76 @@ class WorkoutDetailScreen extends ConsumerWidget {
             Row(
               children: [
                 if (workout.duration != null)
-                  _StatChip(icon: Icons.timer, label: formatDuration(workout.duration)),
+                  _StatChip(
+                    icon: Icons.timer,
+                    label: formatDuration(workout.duration),
+                  ),
                 const SizedBox(width: 12),
                 if (workout.calories != null)
-                  _StatChip(icon: Icons.local_fire_department, label: '${workout.calories} cal'),
+                  _StatChip(
+                    icon: Icons.local_fire_department,
+                    label: '${workout.calories} cal',
+                  ),
                 const SizedBox(width: 12),
                 if (workout.goal != null)
-                  _StatChip(icon: Icons.flag, label: workout.goal!.replaceAll('_', ' ')),
+                  _StatChip(
+                    icon: Icons.flag,
+                    label: workout.goal!.replaceAll('_', ' '),
+                  ),
               ],
             ),
             const SizedBox(height: 8),
-            Text(formatDate(workout.date), style: const TextStyle(color: AppColors.textMuted)),
+            Text(
+              formatDate(workout.date),
+              style: const TextStyle(color: AppColors.textMuted),
+            ),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  ref.read(workoutSessionProvider.notifier).startSession(
-                    workout.title,
-                    workout.exercises,
-                  );
+                  ref
+                      .read(workoutSessionProvider.notifier)
+                      .startSession(workout.title, workout.exercises);
                   context.go('/workouts/session');
                 },
                 icon: const Icon(Icons.play_arrow, size: 20),
-                label: const Text('START WORKOUT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                label: const Text(
+                  'START WORKOUT',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.background,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
             if (workout.notes != null) ...[
               const SizedBox(height: 16),
-              Text(workout.notes!, style: const TextStyle(color: AppColors.textSecondary)),
+              Text(
+                workout.notes!,
+                style: const TextStyle(color: AppColors.textSecondary),
+              ),
             ],
             const SizedBox(height: 24),
-            const Text('Exercises', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+            const Text(
+              'Exercises',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
             const SizedBox(height: 12),
             if (workout.exercises.isEmpty)
-              const Text('No exercises recorded', style: TextStyle(color: AppColors.textMuted))
+              const Text(
+                'No exercises recorded',
+                style: TextStyle(color: AppColors.textMuted),
+              )
             else
               ...workout.exercises.map((e) => _ExerciseCard(exercise: e)),
             const SizedBox(height: 32),
@@ -93,11 +122,16 @@ class WorkoutDetailScreen extends ConsumerWidget {
               child: OutlinedButton.icon(
                 onPressed: () => _confirmDelete(context, ref, workout.id),
                 icon: const Icon(Icons.delete_outline, color: AppColors.error),
-                label: const Text('Delete Workout', style: TextStyle(color: AppColors.error)),
+                label: const Text(
+                  'Delete Workout',
+                  style: TextStyle(color: AppColors.error),
+                ),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: AppColors.error),
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -152,7 +186,13 @@ class _StatChip extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: AppColors.primary),
           const SizedBox(width: 6),
-          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+            ),
+          ),
         ],
       ),
     );
@@ -172,25 +212,43 @@ class _ExerciseCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 40, height: 40,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: AppColors.accentBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.fitness_center, color: AppColors.accentBlue, size: 20),
+              child: const Icon(
+                Icons.fitness_center,
+                color: AppColors.accentBlue,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(exercise.name, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                  Text(
+                    exercise.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      if (exercise.sets != null) _detail('${exercise.sets} sets'),
-                      if (exercise.reps != null) ...[const SizedBox(width: 12), _detail('${exercise.reps} reps')],
-                      if (exercise.weight != null) ...[const SizedBox(width: 12), _detail('${exercise.weight} kg')],
+                      if (exercise.sets != null)
+                        _detail('${exercise.sets} sets'),
+                      if (exercise.reps != null) ...[
+                        const SizedBox(width: 12),
+                        _detail('${exercise.reps} reps'),
+                      ],
+                      if (exercise.weight != null) ...[
+                        const SizedBox(width: 12),
+                        _detail('${exercise.weight} kg'),
+                      ],
                     ],
                   ),
                 ],
@@ -203,6 +261,9 @@ class _ExerciseCard extends StatelessWidget {
   }
 
   Widget _detail(String text) {
-    return Text(text, style: const TextStyle(color: AppColors.textMuted, fontSize: 12));
+    return Text(
+      text,
+      style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+    );
   }
 }

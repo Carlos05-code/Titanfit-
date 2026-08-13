@@ -14,19 +14,11 @@ class AuthState {
   final UserModel? user;
   final String? error;
 
-  const AuthState({
-    this.status = AuthStatus.initial,
-    this.user,
-    this.error,
-  });
+  const AuthState({this.status = AuthStatus.initial, this.user, this.error});
 
   bool get isAuthenticated => status == AuthStatus.authenticated;
 
-  AuthState copyWith({
-    AuthStatus? status,
-    UserModel? user,
-    String? error,
-  }) {
+  AuthState copyWith({AuthStatus? status, UserModel? user, String? error}) {
     return AuthState(
       status: status ?? this.status,
       user: user ?? this.user,

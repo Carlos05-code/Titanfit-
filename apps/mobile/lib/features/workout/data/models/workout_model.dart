@@ -77,7 +77,8 @@ class WorkoutModel {
       duration: json['duration'] as int?,
       calories: json['calories'] as int?,
       notes: json['notes'] as String?,
-      exercises: (json['exercises'] as List?)
+      exercises:
+          (json['exercises'] as List?)
               ?.map((e) => ExerciseModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
